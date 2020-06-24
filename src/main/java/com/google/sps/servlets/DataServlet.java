@@ -31,5 +31,4 @@ public class DataServlet extends HttpServlet {
     response.setContentType("text/html;");
     response.getWriter().println("<h1>Hello world!</h1>");
   }
-  @Override public void doPost
 }

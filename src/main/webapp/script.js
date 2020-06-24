@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // TODO: Add functions below
-function addThreads() { // eslint-disable-line
+function addThreads() {  // eslint-disable-line
   fetch('/data').then((response) => response.text()).then((quote) => {
     document.getElementById('thread-container').innerText = quote;
   });

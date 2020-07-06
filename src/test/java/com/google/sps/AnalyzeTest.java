@@ -78,12 +78,12 @@ public class AnalyzeTest {
     assertThat(sentiment.getMagnitude()).isGreaterThan(0.0F);
     assertThat(sentiment.getScore()).isLessThan(0.0F);
   }
-
-@Test
+  
+  @Test
   public void analyzeSentimentScore_returnNegative() throws Exception {
-    float sentiment =
-        analyze.getSentimentScore("That was the worst performance I've seen in a while.");
-    assertThat(sentiment).isLessThan(0.0F);
+    float sentimentScore =
+        analyze.analyzeSentimentText("That was the worst performance I've seen in a while.").getScore();
+    assertThat(sentimentScore).isLessThan(0.0F);
   }
 
   @Test

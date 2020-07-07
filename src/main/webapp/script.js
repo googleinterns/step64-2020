@@ -21,10 +21,10 @@ function addThreads() {  // eslint-disable-line
     for (let i = 0; i < threadInfoList.length; i += 4) {
       // create description
       const ulid = 'ul' + i;
-      const lidescription = document.createElement('LI');
+      const lidescription = document.createElement('li');
       lidescription.innerText = 'Description';
-      lidescription.className = 'descriptionli';
-      const description = document.createElement('UL');
+      lidescription.className = 'description-li';
+      const description = document.createElement('ul');
       description.appendChild(lidescription);
       description.appendChild(
           createListElement('sentiment:' + threadInfoList[i + 1]));
@@ -48,7 +48,7 @@ function createListElement(text) {
   return liElement;
 }
 
-/** Creates a <button> element displaying text and  */
+/** Creates a <button> element displaying text */
 function createButtonElement(text, index) {
   const buttonid = 'button' + index;
   const buttonElement = document.createElement('button');

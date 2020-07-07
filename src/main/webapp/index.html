@@ -6,11 +6,16 @@
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="addThreads()">
     <div id="content">
       <h1>Reddit Dashboard</h1>
-      <button onclick="addThreads()" type="button">Get Response</button>
       <div id="thread-container"></div>
+      <button type="button" id="previous" onclick="previousPage()" value="Previous">Previous</button>
+      <span>Page</span>
+      <select name="pageNumber" id="pageNumer" onchange="numberPage(value)"></select>
+      <span id="amountOfPages"> </span>
+      <button type="button" id="next" onclick="nextPage()" value="Next">Next</button>
+      <p id="page-error"></p>
     </div>
   </body>
 </html>

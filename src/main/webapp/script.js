@@ -13,7 +13,58 @@
 // limitations under the License.
 
 function addThreads() {  // eslint-disable-line
-  fetch('/data').then((response) => response.text()).then((quote) => {
-    document.getElementById('thread-container').innerText = quote;
+  const url = '/data';
+  fetch(url).then((response) => response.json()).then((threadInfoList) => {
+    const threadList = document.getElementById('thread-container');
+    threadList.innerHTML = '';
+
+    let i;
+    for (i = 0; i < threadInfoList.length; i += 4) {
+      // create description
+      const ulid = 'ul' + i;
+      const lidescription = document.createElement('LI');
+      lidescription.innerText = 'Description';
+      lidescription.className = 'descriptionli';
+      const description = document.createElement('UL');
+      description.appendChild(lidescription);
+      description.appendChild(
+          createListElement('sentiment:' + threadInfoList[i + 1]));
+      description.appendChild(
+          createListElement('upvotes: ' + threadInfoList[i + 2]));
+      description.appendChild(linkListElement(threadInfoList[i + 3]));
+      description.className = ('description');
+      description.setAttribute('id', ulid);
+      // create description
+      const thread = createButtonElement(threadInfoList[i], i);
+      threadList.appendChild(thread);
+      threadList.appendChild(description);
+    }
   });
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
+
+/** Creates a <button> element displaying text and  */
+function createButtonElement(text, index) {
+  const buttonid = 'button' + index;
+  const buttonElement = document.createElement('button');
+  buttonElement.innerText = text;
+  buttonElement.className = 'thread';
+  buttonElement.setAttribute('id', buttonid);
+  return buttonElement;
+}
+
+/** Creates a <a> element that is appended to li element */
+function linkListElement(url) {
+  const aElement = document.createElement('a');
+  const link = document.createElement('li');
+  aElement.href = url;
+  aElement.innerText = 'See the Thread on Reddit';
+  link.appendChild(aElement);
+  return link;
 }

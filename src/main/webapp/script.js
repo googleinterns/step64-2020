@@ -18,8 +18,7 @@ function addThreads() {  // eslint-disable-line
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
 
-    let i;
-    for (i = 0; i < threadInfoList.length; i += 4) {
+    for (let i = 0; i < threadInfoList.length; i += 4) {
       // create description
       const ulid = 'ul' + i;
       const lidescription = document.createElement('LI');

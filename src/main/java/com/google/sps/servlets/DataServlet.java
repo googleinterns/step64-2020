@@ -33,59 +33,16 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final Gson gson = new Gson();
-
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  private static String TIMESTAMP = "timestamp";
-  private static String TITLE = "title";
-  private static String SENTIMENT = "sentiment";
-  private static String UPVOTES = "upvotes";
-  private static String URL = "url";
-  // private static String SUBJECTTAG = "subjecttag";
-  // private static String SUBJECTTAGLIST = "subjecttaglist";
-  // private static String CUSTOMTAGLIST = "customtaglist";
+  private static final String TIMESTAMP = "timestamp";
+  private static final String TITLE = "title";
+  private static final String SENTIMENT = "sentiment";
+  private static final String UPVOTES = "upvotes";
+  private static final String URL = "url";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // response.sendRedirect("/index.html");
-    /*String settitle = "Orange";
-    int settimestamp = 90;
-    int setupvotes = 32;
-    double setsentiment = -.3;
-    String seturl = "https://google.com";
-    //String setsubjecttag = "";
-
-
-    //Create Enity for the analyzed thread
-    Entity threadEntity = new Entity("Thread");
-    threadEntity.setProperty(TITLE, settitle);
-    threadEntity.setProperty(UPVOTES, setupvotes);
-    threadEntity.setProperty(SENTIMENT, setsentiment);
-    threadEntity.setProperty(TIMESTAMP, settimestamp);
-    threadEntity.setProperty(URL,seturl);
-    //threadEntity.setProperty(SUBJECTTAG, subjecttag);
-
-    datastore.put(threadEntity);
-    Query query = new Query("Thread");*/
-
-    // PreparedQuery results = datastore.prepare(query);
     List<Object> threads = new ArrayList<Object>();
-
-    /*for(Entity entity : results.asIterable()){
-        String title = ((String) entity.getProperty(TITLE));
-        System.out.println(title);
-        int upvotes = ((int) entity.getProperty(UPVOTES));
-        System.out.println(upvotes);
-        double sentiment = ((double) entity.getProperty(SENTIMENT));
-        System.out.println(sentiment);
-        String url = ((String) entity.getProperty(URL));
-        System.out.println(url);
-        /*Script does not handle subject tags yet*///String subject = ((String)entity.getProperty(SUBJECTTAG));
-    /*threads.add(title);
-    threads.add(upvotes);
-    threads.add(sentiment);
-    threads.add(url);
-    //threads.add(subject);
-}*/
 
     for (int i = 0; i < 15; i++) {
       threads.add(AnalyzedThread.RandomTitle());

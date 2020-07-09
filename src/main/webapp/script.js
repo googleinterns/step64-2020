@@ -17,53 +17,70 @@ function addThreads() {  // eslint-disable-line
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
+    console.log(threadInfoList.stringify);
 
-    for (let i = 0; i < threadInfoList.length; i += 4) {
-      // create description
-      const ulid = 'ul' + i;
-      const lidescription = document.createElement('li');
-      lidescription.innerText = 'Description';
-      lidescription.className = 'description-li';
-      const description = document.createElement('ul');
-      description.appendChild(lidescription);
-      description.appendChild(
-          createListElement('sentiment:' + threadInfoList[i + 1]));
-      description.appendChild(
-          createListElement('upvotes: ' + threadInfoList[i + 2]));
-      description.appendChild(linkListElement(threadInfoList[i + 3]));
-      description.className = ('description');
-      description.setAttribute('id', ulid);
-      // create description
-      const thread = createButtonElement(threadInfoList[i], i);
-      threadList.appendChild(thread);
-      threadList.appendChild(description);
-    }
+    threadList.appendChild(loadList(threadInfoList));
   });
 }
 
-/** Creates an <li> element containing text. */
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
+function loadList(list){
+    const div = document.createElement('div');
+    for (let i=0; i <list.length; i++){
+        const description = createDescription(list, i);
+        const button = createTitleButton(list, i);
+        buttton.appendChild(description);
+        div. appendChild(button);
+    }
+    return div;
 }
 
-/** Creates a <button> element displaying text */
-function createButtonElement(text, index) {
-  const buttonid = 'button' + index;
-  const buttonElement = document.createElement('button');
-  buttonElement.innerText = text;
-  buttonElement.className = 'thread';
-  buttonElement.setAttribute('id', buttonid);
-  return buttonElement;
+function createDescription(list, index){
+    const threadDescription = document.createElement('ul');
+    const liDescription = document.createElement('li');
+    console.log(list.stringify());
+    liDescription.innerText = 'Description';
+    liDescription.className = 'description-li';
+    threadDescription.appendChild(liDescription);
+    threadDescription.appendChild(createLiElement(
+        list.sentiment[index]));
+    threadDescription.appendChild(createLiElement(
+        list.upvotes[index]));
+    threadDescription.appendChild(linkListElement(
+        list.url[index]));
+    threadDescription.className = 'description';
+    threadDescription.id = 'ul'+ index;
+    return threadDescription;
 }
 
-/** Creates a <a> element that is appended to li element */
-function linkListElement(url) {
-  const aElement = document.createElement('a');
-  const link = document.createElement('li');
-  aElement.href = url;
-  aElement.innerText = 'See the Thread on Reddit';
-  link.appendChild(aElement);
-  return link;
+function createTitleButtton(list,index) {
+    const titleButton = document.creatElement('button');
+    titleButton.innerText = list.title[index];
+    titleButton.className = 'thread';
+    titleButton.onclick = openAndClose(index);
+    return threadButtton
+}
+
+function openAndClose(value) {
+    const description = document.getElementById('ul'+value);
+    if (description.style.display == 'none'){
+        description.style.display = 'block';
+    } else {
+        description.style.display = 'none';
+    }
+}
+
+function createLiElement (text) {
+    const liElement = document.createElement('li');
+    liElement.innerText = text;
+    return liElement;
+}
+
+function linkListElement (url) {
+    const liElement = document.createElement('li');
+    const aElement = document.createElement('a');
+    aElement.href = url;
+    aElement.innerText = 'See Thread on Reddit';
+    liElement.appendChildChild(aElement);
+    return liElement;
+
 }

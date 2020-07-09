@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import org.json.simple.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  private static List <String> threadTitles = new ArrayList <String>();
+  private static List <Double> threadSentiments = new ArrayList <Double>();
+  private static List <Integer> threadUpvotes = new ArrayList <Integer>();
+  private static List <String> threadUrls = new ArrayList <String>();
+  private static JSONObject threadInfoList = new JSONObject();
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";
   private static final String SENTIMENT = "sentiment";
@@ -42,17 +48,28 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<Object> threads = new ArrayList<Object>();
 
     for (int i = 0; i < 15; i++) {
-      threads.add(AnalyzedThread.RandomTitle());
-      threads.add(AnalyzedThread.RandomSentiment());
-      threads.add(AnalyzedThread.RandomUpvotes());
-      threads.add(AnalyzedThread.RandomUrl());
+      threadTitles.add(AnalyzedThread.RandomTitle());
+      threadSentiments.add(AnalyzedThread.RandomSentiment());
+      threadUpvotes.add(AnalyzedThread.RandomUpvotes());
+      threadUrls.add(AnalyzedThread.RandomUrl());
     }
+    
+    String titles = gson.toJson(threadTitles);
+    String sentiments = gson.toJson(threadSentiments);
+    String upvotes = gson.toJson(threadUpvotes);
+    String urls = gson.toJson(threadUrls);
 
-    String json = gson.toJson(threads);
+
+    threadInfoList.put(TITLE, titles);
+    threadInfoList.put(SENTIMENT, sentiments);
+    threadInfoList.put(UPVOTES, upvotes);
+    threadInfoList.put(URL, urls);
+
+    System.out.print(threadInfoList.toString());
+
     response.setContentType("application/json;");
-    response.getWriter().println(json);
+    response.getWriter().println(threadInfoList);
   }
 }

@@ -13,15 +13,25 @@
 // limitations under the License.
 
 package com.google.sps.servlets;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.sps.servlets.YoutubeApi;
+import java.io.Console;
 import java.io.IOException;
-
-import java.com.google.sps.data.RedditData;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.Collection;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,9 +45,13 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println();
-    RedditData post = new RedditData();
-    System.out.println(post.getRedditPosts());
+    try {
+      YoutubeApi.getService();
+      YoutubePost newPost = YoutubeApi.getYoutubePost();
+      response.setContentType("text/html;");
+      response.getWriter().println(newPost);
+    } catch (GeneralSecurityException | IOException e) {
+      System.out.println("Error: Youtube api returning exception" + e);
+    }
   }
 }

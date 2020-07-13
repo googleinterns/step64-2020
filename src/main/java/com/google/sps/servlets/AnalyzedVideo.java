@@ -1,4 +1,4 @@
-package com.google.sps.servlets;
+package com.google.sps;
 
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
@@ -30,7 +30,6 @@ public class AnalyzedVideo {
     this.upvotes = upvotes;
     this.timestamp = timestamp;
     this.threadUrl = threadUrl;
-    // this.subject = subject;
   }
 
   public static AnalyzedVideo createThread(
@@ -59,23 +58,23 @@ public class AnalyzedVideo {
   }
 
   public static String getRandomTitle() {
-    String StringValue = titlesList.get(rand.nextInt(4));
-    return StringValue;
+    String randomTitle = titlesList.get(rand.nextInt(4));
+    return randomTitle;
   }
 
   public static double getRandomSentiment() {
-    double SentimentValue = sentimentList.get(rand.nextInt(4));
-    return SentimentValue;
+    double randomSentiment = sentimentList.get(rand.nextInt(4));
+    return randomSentiment;
   }
 
   public static int getRandomUpvote() {
-    int UpvotesValue = upvotesList.get(rand.nextInt(4));
-    return UpvotesValue;
+    int randomUpvote = upvotesList.get(rand.nextInt(4));
+    return randomUpvote;
   }
 
   public static String getRandomUrl() {
-    String UrlValue = urlList.get(rand.nextInt(4));
-    return UrlValue;
+    String randomUrl = urlList.get(rand.nextInt(4));
+    return randomUrl;
   }
 
   public String toString() {

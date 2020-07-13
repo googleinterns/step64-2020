@@ -23,7 +23,7 @@ function addThreads() {  // eslint-disable-line
 
 function loadList(list) {
   const div = document.createElement('div');
-  div.id = "Dividor";
+  div.id = 'Dividor';
   for (let i = 0; i < list.sentiment.length; i++) {
     const description = createDescription(list, i);
     const button = createTitleButton(list, i);
@@ -76,19 +76,12 @@ function linkListElement(url) {
 
 /** Retrieves the previous page */
 function previous() {  // eslint-disable-line
-  const div = document.getElementById('Dividor');
-  while (div.firstChild){
-      div.removeChild(div.firstChild);
-      addThreads();
-  }
+  /**   TODO */
 }
 
 /** Retrieves the next page */
 function next() {  // eslint-disable-line
   /**   TODO */
-  const div = document.getElementById('Dividor');
-  div.innerHTML = '';
-  addThreads();
 }
 
 /** Retrieves the specificied page number */

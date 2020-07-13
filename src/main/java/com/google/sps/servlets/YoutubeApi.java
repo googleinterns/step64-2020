@@ -12,36 +12,38 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class YoutubeApi {
   private static final String DEVELOPER_KEY = "AIzaSyCSxCO3BeXFt1lYAou94rtlyQhinc470So";
-  private static final String APPLICATION_NAME = "API code samples";
+  private static final String APPLICATION_NAME = "Capstone Project";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-  public static YouTube getService() throws GeneralSecurityException, IOException {
+  private static YouTube getService() throws GeneralSecurityException, IOException {
     final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     return new YouTube.Builder(httpTransport, JSON_FACTORY, null)
         .setApplicationName(APPLICATION_NAME)
         .build();
   }
-  public static YoutubePost getYoutubePost() throws GeneralSecurityException, IOException {
+  public static List<YoutubePost> getYoutubePost() {
+    List<YoutubePost> list = new ArrayList();
+    String id = "Ks-_Mh1QhMc";
     try {
-      YoutubePost newPost = new YoutubePost();
       YouTube youtubeService = getService();
       VideoListResponse response = youtubeService.videos()
                                        .list("snippet")
                                        .setKey(DEVELOPER_KEY)
-                                       .setId("Ks-_Mh1QhMc")
+                                       .setId(id)
                                        .execute();
       Video video = response.getItems().get(0);
-      newPost.content = video.getSnippet().getDescription();
-      newPost.title = video.getSnippet().getTitle();
-      newPost.id = video.getId();
-      return newPost;
+      YoutubePost newPost = new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(), video.getId());
+      list.add(newPost);
+      return list;
     } catch (GeneralSecurityException | IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);
     }
-    return null;
+    return list;
   }
 }

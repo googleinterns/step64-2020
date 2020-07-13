@@ -31,11 +31,13 @@ import java.io.Console;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Collection;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.http.HTTPException;
 
 /**
  * Servlet that returns some example content.
@@ -44,14 +46,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
     try {
-      YoutubeApi.getService();
-      YoutubePost newPost = YoutubeApi.getYoutubePost();
+      List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
       response.setContentType("text/html;");
       response.getWriter().println(newPost);
-    } catch (GeneralSecurityException | IOException e) {
+    } catch (IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);
+      response.sendError(400);
     }
   }
 }

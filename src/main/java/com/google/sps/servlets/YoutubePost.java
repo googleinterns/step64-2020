@@ -20,6 +20,11 @@ public class YoutubePost {
   String url;
   String id;
 
+  public YoutubePost(String title, String content, String id) {
+      this.title = title;
+      this.content = content;
+      this.id = id;
+  }
   @Override
   public String toString() {
     String post = ("title: " + title + "\n"

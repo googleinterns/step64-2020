@@ -70,3 +70,20 @@ function linkListElement(url) {
   liElement.appendChild(aElement);
   return liElement;
 }
+
+/** TODO: Create Pagination for Dashboard*/
+
+/** Retrieves the previous page */
+function previous() {  // eslint-disable-line
+  /**   TODO */
+}
+
+/** Retrieves the next page */
+function next() {  // eslint-disable-line
+  /**   TODO */
+}
+
+/** Retrieves the specificied page number */
+function numberPage(pageNumber) {  // eslint-disable-line
+  /**   TODO */
+}

@@ -38,8 +38,10 @@ function createDescription(list, index) {
   liDescription.innerText = 'Description';
   liDescription.className = 'description-li';
   threadDescription.appendChild(liDescription);
-  threadDescription.appendChild(createLiElement(list.sentiment[index]));
-  threadDescription.appendChild(createLiElement(list.upvotes[index]));
+  threadDescription.appendChild(
+      createLiElement('Sentiment Value: ' + list.sentiment[index]));
+  threadDescription.appendChild(
+      createLiElement('Upvotes: ' + list.upvotes[index]));
   threadDescription.appendChild(linkListElement(list.url[index]));
   threadDescription.className = 'description';
   threadDescription.id = 'ul' + index;

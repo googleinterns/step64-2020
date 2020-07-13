@@ -17,4 +17,3 @@ function addThreads() {  // eslint-disable-line
     document.getElementById('thread-container').innerText = quote;
   });
 }
-

@@ -31,8 +31,8 @@ import java.io.Console;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +46,7 @@ import javax.xml.ws.http.HTTPException;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     try {
       List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
       response.setContentType("text/html;");

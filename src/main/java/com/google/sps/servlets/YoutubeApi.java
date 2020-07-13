@@ -11,10 +11,10 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class YoutubeApi {
   private static final String DEVELOPER_KEY = "AIzaSyCSxCO3BeXFt1lYAou94rtlyQhinc470So";
@@ -32,13 +32,11 @@ public class YoutubeApi {
     String id = "Ks-_Mh1QhMc";
     try {
       YouTube youtubeService = getService();
-      VideoListResponse response = youtubeService.videos()
-                                       .list("snippet")
-                                       .setKey(DEVELOPER_KEY)
-                                       .setId(id)
-                                       .execute();
+      VideoListResponse response =
+          youtubeService.videos().list("snippet").setKey(DEVELOPER_KEY).setId(id).execute();
       Video video = response.getItems().get(0);
-      YoutubePost newPost = new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(), video.getId());
+      YoutubePost newPost = new YoutubePost(
+          video.getSnippet().getTitle(), video.getSnippet().getDescription(), video.getId());
       list.add(newPost);
       return list;
     } catch (GeneralSecurityException | IOException e) {

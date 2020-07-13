@@ -21,9 +21,9 @@ public class YoutubePost {
   String id;
 
   public YoutubePost(String title, String content, String id) {
-      this.title = title;
-      this.content = content;
-      this.id = id;
+    this.title = title;
+    this.content = content;
+    this.id = id;
   }
   @Override
   public String toString() {

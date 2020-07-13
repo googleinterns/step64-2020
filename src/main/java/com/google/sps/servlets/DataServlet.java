@@ -33,7 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
 /**
- * Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video */
+ * Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video
+ */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "timestamp";

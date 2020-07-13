@@ -51,9 +51,8 @@ public class DataServlet extends HttpServlet {
       List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
       response.setContentType("text/html;");
       response.getWriter().println(newPost);
-    } catch (IOException e) {
+    } catch (IOException | YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
-      response.sendError(400);
     }
   }
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets;
+package com.google.sps;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -20,6 +20,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.cloud.language.v1.Sentiment;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class DataServlet extends HttpServlet {
   private static final String SENTIMENT = "sentiment";
   private static final String UPVOTES = "upvotes";
   private static final String URL = "url";
+  private final Analyze analyze = new Analyze();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -54,5 +56,16 @@ public class DataServlet extends HttpServlet {
     String json = gson.toJson(threads);
     response.setContentType("application/json;");
     response.getWriter().println(json);
+
+    // get sentiment properties from text
+    Sentiment sentimentFromText = analyze.analyzeSentimentText("youtube comment text");
+    double sentimentScoreText = sentimentFromText.getScore();
+    double magnitudeScoreText = sentimentFromText.getMagnitude();
+    // print the main subjects in the text
+    analyze.analyzeEntitiesText("youtube comment text");
+    // print the syntax in the text
+    analyze.analyzeSyntaxText("youtube comment text");
+    // print categories in text
+    analyze.entitySentimentText("youtube comment text");
   }
 }

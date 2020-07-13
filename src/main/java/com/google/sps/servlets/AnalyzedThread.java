@@ -1,4 +1,4 @@
-package com.google.sps.servlets;
+package com.google.sps;
 
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;

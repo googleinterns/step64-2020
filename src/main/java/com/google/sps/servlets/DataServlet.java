@@ -67,6 +67,5 @@ public class DataServlet extends HttpServlet {
     analyze.analyzeSyntaxText("youtube comment text");
     // print categories in text
     analyze.entitySentimentText("youtube comment text");
-
   }
 }

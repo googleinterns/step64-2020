@@ -31,10 +31,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet that returns some example content.
- * comments data
- */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   private final Gson gson = new Gson();
@@ -71,5 +67,6 @@ public class DataServlet extends HttpServlet {
     analyze.analyzeSyntaxText("youtube comment text");
     // print categories in text
     analyze.entitySentimentText("youtube comment text");
+
   }
 }

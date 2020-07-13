@@ -21,7 +21,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
-import org.json.simple.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +29,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 /**Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video*/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
@@ -38,25 +38,23 @@ public class DataServlet extends HttpServlet {
   private static final String SENTIMENT = "sentiment";
   private static final String UPVOTES = "upvotes";
   private static final String URL = "url";
-  private static List <String> threadTitles = new ArrayList <String>();
-  private static List <Double> threadSentiments = new ArrayList <Double>();
-  private static List <Integer> threadUpvotes = new ArrayList <Integer>();
-  private static List <String> threadUrls = new ArrayList <String>();
+  private static List<String> threadTitles = new ArrayList<String>();
+  private static List<Double> threadSentiments = new ArrayList<Double>();
+  private static List<Integer> threadUpvotes = new ArrayList<Integer>();
+  private static List<String> threadUrls = new ArrayList<String>();
   private static JSONObject threadInfoList = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  
-  
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    for( int i =0; i <5; i++){
-        threadTitles.add(AnalyzedVideo.getRandomTitle());
-        threadSentiments.add(AnalyzedVideo.getRandomSentiment());
-        threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-        threadUrls.add(AnalyzedVideo.getRandomUrl());
+    for (int i = 0; i < 5; i++) {
+      threadTitles.add(AnalyzedVideo.getRandomTitle());
+      threadSentiments.add(AnalyzedVideo.getRandomSentiment());
+      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
+      threadUrls.add(AnalyzedVideo.getRandomUrl());
     }
-    
+
     threadInfoList.put(TITLE, threadTitles);
     threadInfoList.put(SENTIMENT, threadSentiments);
     threadInfoList.put(UPVOTES, threadUpvotes);

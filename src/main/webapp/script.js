@@ -21,54 +21,50 @@ function addThreads() {  // eslint-disable-line
   });
 }
 
-function loadList(list){
-    const div = document.createElement('div');
-    for (let i=0; i <list.sentiment.length; i++){
-        const description = createDescription(list, i);
-        const button = createTitleButton(list, i);
-        div. appendChild(button);
-        div.appendChild(description);
-    }
-    return div;
+function loadList(list) {
+  const div = document.createElement('div');
+  for (let i = 0; i < list.sentiment.length; i++) {
+    const description = createDescription(list, i);
+    const button = createTitleButton(list, i);
+    div.appendChild(button);
+    div.appendChild(description);
+  }
+  return div;
 }
 
-function createDescription(list, index){
-    const threadDescription = document.createElement('ul');
-    const liDescription = document.createElement('li');
-    liDescription.innerText = 'Description';
-    liDescription.className = 'description-li';
-    threadDescription.appendChild(liDescription);
-    threadDescription.appendChild(createLiElement(
-        list.sentiment[index]));
-    threadDescription.appendChild(createLiElement(
-        list.upvotes[index]));
-    threadDescription.appendChild(linkListElement(
-        list.url[index]));
-    threadDescription.className = 'description';
-    threadDescription.id = 'ul'+ index;
-    return threadDescription;
+function createDescription(list, index) {
+  const threadDescription = document.createElement('ul');
+  const liDescription = document.createElement('li');
+  liDescription.innerText = 'Description';
+  liDescription.className = 'description-li';
+  threadDescription.appendChild(liDescription);
+  threadDescription.appendChild(createLiElement(list.sentiment[index]));
+  threadDescription.appendChild(createLiElement(list.upvotes[index]));
+  threadDescription.appendChild(linkListElement(list.url[index]));
+  threadDescription.className = 'description';
+  threadDescription.id = 'ul' + index;
+  return threadDescription;
 }
 
-function createTitleButton(list,index) {
-    const titleButton = document.createElement('button');
-    titleButton.innerText = list.title[index];
-    titleButton.className = 'thread';
-    return titleButton;
+function createTitleButton(list, index) {
+  const titleButton = document.createElement('button');
+  titleButton.innerText = list.title[index];
+  titleButton.className = 'thread';
+  return titleButton;
 }
 
 
-function createLiElement (text) {
-    const liElement = document.createElement('li');
-    liElement.innerText = text;
-    return liElement;
+function createLiElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
 }
 
-function linkListElement (url) {
-    const liElement = document.createElement('li');
-    const aElement = document.createElement('a');
-    aElement.href = url;
-    aElement.innerText = 'See Youtube Video';
-    liElement.appendChild(aElement);
-    return liElement;
-
+function linkListElement(url) {
+  const liElement = document.createElement('li');
+  const aElement = document.createElement('a');
+  aElement.href = url;
+  aElement.innerText = 'See Youtube Video';
+  liElement.appendChild(aElement);
+  return liElement;
 }

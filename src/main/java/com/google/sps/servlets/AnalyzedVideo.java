@@ -22,7 +22,7 @@ public class AnalyzedVideo {
   private final int upvotes;
   private final int timestamp;
   private final String threadUrl;
-  
+
   private AnalyzedVideo(
       String threadTitle, double sentiment, int upvotes, int timestamp, String threadUrl) {
     this.threadTitle = threadTitle;

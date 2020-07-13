@@ -33,7 +33,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private Analyze analyze = new Analyze();
+  private final Analyze analyze = new Analyze();
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");

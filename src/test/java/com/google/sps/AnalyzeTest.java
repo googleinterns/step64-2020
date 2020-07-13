@@ -32,7 +32,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 
 @RunWith(JUnit4.class)
-@Ignore
+@Ignore // Sentiment API not working due to credential issues 
 public class AnalyzeTest {
 
   private ByteArrayOutputStream bout;

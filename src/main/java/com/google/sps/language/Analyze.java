@@ -62,7 +62,7 @@ public class Analyze {
     }
   }
 
-  public void analyzeEntities(Document doc, LanguageServiceClient language) throws IOException {
+  private void analyzeEntities(Document doc, LanguageServiceClient language) throws IOException {
     AnalyzeEntitiesRequest request = AnalyzeEntitiesRequest.newBuilder()
                                          .setDocument(doc)
                                          .setEncodingType(EncodingType.UTF16)
@@ -105,7 +105,7 @@ public class Analyze {
     }
   }
 
-  public Sentiment analyzeSentiment(Document doc, LanguageServiceClient language)
+  private Sentiment analyzeSentiment(Document doc, LanguageServiceClient language)
       throws IOException {
     AnalyzeSentimentResponse response = language.analyzeSentiment(doc);
     Sentiment sentiment = response.getDocumentSentiment();
@@ -137,7 +137,7 @@ public class Analyze {
     }
   }
 
-  public List<Token> analyzeSyntax(Document doc, LanguageServiceClient language)
+  private List<Token> analyzeSyntax(Document doc, LanguageServiceClient language)
       throws IOException {
     AnalyzeSyntaxRequest request = AnalyzeSyntaxRequest.newBuilder()
                                        .setDocument(doc)
@@ -191,7 +191,7 @@ public class Analyze {
     }
   }
 
-  public void classify(Document doc, LanguageServiceClient language) throws IOException {
+  private void classify(Document doc, LanguageServiceClient language) throws IOException {
     ClassifyTextRequest request = ClassifyTextRequest.newBuilder().setDocument(doc).build();
     // detect categories in the given file
     ClassifyTextResponse response = language.classifyText(request);
@@ -221,7 +221,7 @@ public class Analyze {
     }
   }
 
-  public void entitySentiment(Document doc, LanguageServiceClient language) throws IOException {
+  private void entitySentiment(Document doc, LanguageServiceClient language) throws IOException {
     AnalyzeEntitySentimentRequest request = AnalyzeEntitySentimentRequest.newBuilder()
                                                 .setDocument(doc)
                                                 .setEncodingType(EncodingType.UTF16)

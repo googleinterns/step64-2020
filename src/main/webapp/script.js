@@ -17,19 +17,17 @@ function addThreads() {  // eslint-disable-line
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
-    console.log(threadInfoList.stringify);
-
     threadList.appendChild(loadList(threadInfoList));
   });
 }
 
 function loadList(list){
     const div = document.createElement('div');
-    for (let i=0; i <list.length; i++){
+    for (let i=0; i <list.sentiment.length; i++){
         const description = createDescription(list, i);
         const button = createTitleButton(list, i);
-        buttton.appendChild(description);
         div. appendChild(button);
+        div.appendChild(description);
     }
     return div;
 }
@@ -37,7 +35,6 @@ function loadList(list){
 function createDescription(list, index){
     const threadDescription = document.createElement('ul');
     const liDescription = document.createElement('li');
-    console.log(list.stringify());
     liDescription.innerText = 'Description';
     liDescription.className = 'description-li';
     threadDescription.appendChild(liDescription);
@@ -52,22 +49,13 @@ function createDescription(list, index){
     return threadDescription;
 }
 
-function createTitleButtton(list,index) {
-    const titleButton = document.creatElement('button');
+function createTitleButton(list,index) {
+    const titleButton = document.createElement('button');
     titleButton.innerText = list.title[index];
     titleButton.className = 'thread';
-    titleButton.onclick = openAndClose(index);
-    return threadButtton
+    return titleButton;
 }
 
-function openAndClose(value) {
-    const description = document.getElementById('ul'+value);
-    if (description.style.display == 'none'){
-        description.style.display = 'block';
-    } else {
-        description.style.display = 'none';
-    }
-}
 
 function createLiElement (text) {
     const liElement = document.createElement('li');
@@ -79,8 +67,8 @@ function linkListElement (url) {
     const liElement = document.createElement('li');
     const aElement = document.createElement('a');
     aElement.href = url;
-    aElement.innerText = 'See Thread on Reddit';
-    liElement.appendChildChild(aElement);
+    aElement.innerText = 'See Youtube Video';
+    liElement.appendChild(aElement);
     return liElement;
 
 }

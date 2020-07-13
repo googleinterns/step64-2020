@@ -30,44 +30,37 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+/**Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video*/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private final Gson gson = new Gson();
-  private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  private static List <String> threadTitles = new ArrayList <String>();
-  private static List <Double> threadSentiments = new ArrayList <Double>();
-  private static List <Integer> threadUpvotes = new ArrayList <Integer>();
-  private static List <String> threadUrls = new ArrayList <String>();
-  private static JSONObject threadInfoList = new JSONObject();
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";
   private static final String SENTIMENT = "sentiment";
   private static final String UPVOTES = "upvotes";
   private static final String URL = "url";
+  private static List <String> threadTitles = new ArrayList <String>();
+  private static List <Double> threadSentiments = new ArrayList <Double>();
+  private static List <Integer> threadUpvotes = new ArrayList <Integer>();
+  private static List <String> threadUrls = new ArrayList <String>();
+  private static JSONObject threadInfoList = new JSONObject();
+  private final Gson gson = new Gson();
+  private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  
+  
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-    for (int i = 0; i < 15; i++) {
-      threadTitles.add(AnalyzedThread.RandomTitle());
-      threadSentiments.add(AnalyzedThread.RandomSentiment());
-      threadUpvotes.add(AnalyzedThread.RandomUpvotes());
-      threadUrls.add(AnalyzedThread.RandomUrl());
+    for( int i =0; i <5; i++){
+        threadTitles.add(AnalyzedVideo.getRandomTitle());
+        threadSentiments.add(AnalyzedVideo.getRandomSentiment());
+        threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
+        threadUrls.add(AnalyzedVideo.getRandomUrl());
     }
     
-    String titles = gson.toJson(threadTitles);
-    String sentiments = gson.toJson(threadSentiments);
-    String upvotes = gson.toJson(threadUpvotes);
-    String urls = gson.toJson(threadUrls);
-
-
-    threadInfoList.put(TITLE, titles);
-    threadInfoList.put(SENTIMENT, sentiments);
-    threadInfoList.put(UPVOTES, upvotes);
-    threadInfoList.put(URL, urls);
-
-    System.out.print(threadInfoList.toString());
+    threadInfoList.put(TITLE, threadTitles);
+    threadInfoList.put(SENTIMENT, threadSentiments);
+    threadInfoList.put(UPVOTES, threadUpvotes);
+    threadInfoList.put(URL, threadUrls);
 
     response.setContentType("application/json;");
     response.getWriter().println(threadInfoList);

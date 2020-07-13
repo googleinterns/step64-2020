@@ -4,7 +4,8 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.Random;
 
-public class AnalyzedThread {
+/**Represents a Video that's been analyzed by the NLP API */
+public class AnalyzedVideo {
   public final static ImmutableList<String> titlesList =
       ImmutableList.of("Where is this supposed to go?", "This program needs to work better",
           "The wifi needs to be more consistent", "This could be better",
@@ -15,14 +16,14 @@ public class AnalyzedThread {
   public final static ImmutableList<String> urlList =
       ImmutableList.of("http://www.youtube.com", "http://www.reddit.com", "http://www.facebook.com",
           "http://www.yahoo.com", "http://www.amazon.com");
+  private final static Random rand = new Random();
   private final String threadTitle;
   private final double sentiment;
   private final int upvotes;
   private final int timestamp;
   private final String threadUrl;
-  private final static Random rand = new Random();
-
-  private AnalyzedThread(
+  
+  private AnalyzedVideo(
       String threadTitle, double sentiment, int upvotes, int timestamp, String threadUrl) {
     this.threadTitle = threadTitle;
     this.sentiment = sentiment;
@@ -32,9 +33,9 @@ public class AnalyzedThread {
     // this.subject = subject;
   }
 
-  public static AnalyzedThread createThread(
+  public static AnalyzedVideo createThread(
       String threadTitle, double sentiment, int upvotes, int timestamp, String threadUrl) {
-    return new AnalyzedThread(threadTitle, sentiment, upvotes, timestamp, threadUrl);
+    return new AnalyzedVideo(threadTitle, sentiment, upvotes, timestamp, threadUrl);
   }
 
   public String title() {
@@ -45,7 +46,7 @@ public class AnalyzedThread {
     return sentiment;
   }
 
-  public int upvotes() {
+  public int upvote() {
     return upvotes;
   }
 
@@ -57,22 +58,22 @@ public class AnalyzedThread {
     return threadUrl;
   }
 
-  public static String RandomTitle() {
+  public static String getRandomTitle() {
     String StringValue = titlesList.get(rand.nextInt(4));
     return StringValue;
   }
 
-  public static double RandomSentiment() {
+  public static double getRandomSentiment() {
     double SentimentValue = sentimentList.get(rand.nextInt(4));
     return SentimentValue;
   }
 
-  public static int RandomUpvotes() {
+  public static int getRandomUpvote() {
     int UpvotesValue = upvotesList.get(rand.nextInt(4));
     return UpvotesValue;
   }
 
-  public static String RandomUrl() {
+  public static String getRandomUrl() {
     String UrlValue = urlList.get(rand.nextInt(4));
     return UrlValue;
   }

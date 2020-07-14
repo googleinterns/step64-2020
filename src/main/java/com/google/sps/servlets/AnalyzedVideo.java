@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.Random;
 
-/**Represents a Video that's been analyzed by the NLP API */
+/** Represents a Video that's been analyzed by the NLP API */
 public class AnalyzedVideo {
   public final static ImmutableList<String> titlesList =
       ImmutableList.of("Where is this supposed to go?", "This program needs to work better",

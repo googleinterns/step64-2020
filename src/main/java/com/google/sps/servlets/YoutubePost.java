@@ -16,7 +16,7 @@ package com.google.sps.servlets;
 
 import com.google.sps.servlets.YoutubeApiException;
 
-// Data model for a singular Youtube post that will be added into a list of posts.
+/** Data model for a singular Youtube post that will be added into a list of posts. */
 
 public class YoutubePost {
   private final String title;
@@ -24,11 +24,11 @@ public class YoutubePost {
   private static String url;
   private final String id;
 
-  public YoutubePost(String title, String content, String id) throws YoutubeApiException {
+  public YoutubePost(String title, String content, String id) {
     this.title = title;
     this.content = content;
     this.id = id;
-    url = getUrl(id);
+    this.url = getUrl(id);
   }
 
   public static String getUrl(String id) {

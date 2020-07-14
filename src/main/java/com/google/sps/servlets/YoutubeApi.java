@@ -21,39 +21,46 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
 
+/**The Youtube Api handles getting the request from Youtube by
+getting the service then populates the YoutubePost class with
+the video responses. */
+
 public class YoutubeApi {
   private static final String DEVELOPER_KEY = "AIzaSyCSxCO3BeXFt1lYAou94rtlyQhinc470So";
   private static final String APPLICATION_NAME = "Capstone Project";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-  private static YouTube YOUTUBE_SERVICE;
+  private static final Object SERVICE_LOCK = new Object();
+  private static YouTube youtubeService;
 
   private static YouTube getService() throws GeneralSecurityException, IOException {
-    final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    return new YouTube.Builder(httpTransport, JSON_FACTORY, null)
-        .setApplicationName(APPLICATION_NAME)
-        .build();
+    if (youtubeService == null) {
+      synchronized (SERVICE_LOCK) {
+        if (youtubeService == null) {
+          final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+          youtubeService = new YouTube.Builder(httpTransport, JSON_FACTORY, null)
+                               .setApplicationName(APPLICATION_NAME)
+                               .build();
+        }
+      }
+    }
+    return youtubeService;
   }
 
   public static List<YoutubePost> getYoutubePost() throws YoutubeApiException {
     List<YoutubePost> list = new ArrayList();
     String id = "Ks-_Mh1QhMc";
     try {
-      if (YOUTUBE_SERVICE == null) {
-        YOUTUBE_SERVICE = getService();
-      }
+      youtubeService = getService();
       VideoListResponse response =
-          YOUTUBE_SERVICE.videos().list("snippet").setKey(DEVELOPER_KEY).setId(id).execute();
+          youtubeService.videos().list("snippet").setKey(DEVELOPER_KEY).setId(id).execute();
       Video video = response.getItems().get(0);
       YoutubePost newPost = new YoutubePost(
           video.getSnippet().getTitle(), video.getSnippet().getDescription(), video.getId());
       list.add(newPost);
       return list;
-    } catch (GeneralSecurityException | IOException | YoutubeApiException e) {
+    } catch (GeneralSecurityException | IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);
-      if (YOUTUBE_SERVICE == null) {
-        throw new YoutubeApiException("Youtube Api could not get service", e);
-      }
+      throw new YoutubeApiException("Youtube Api could not get service", e);
     }
-    return list;
   }
 }

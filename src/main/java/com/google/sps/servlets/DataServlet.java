@@ -66,7 +66,6 @@ public class DataServlet extends HttpServlet {
     threadInfoList.put(URL, threadUrls);
 
     response.setContentType("application/json;");
-    response.getWriter().println(threadInfoList);
 
     // get sentiment properties from text
     Sentiment sentimentFromText = analyze.analyzeSentimentText("youtube comment text");

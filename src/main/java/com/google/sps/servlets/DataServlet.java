@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Sentiment;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,18 +47,20 @@ public class DataServlet extends HttpServlet {
   private static List<Double> threadSentiments = new ArrayList<Double>();
   private static List<Integer> threadUpvotes = new ArrayList<Integer>();
   private static List<String> threadUrls = new ArrayList<String>();
-  private static JSONObject threadInfoList = new JSONObject();
+  private final JSONObject threadInfoList = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private final Analyze analyze = new Analyze();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    for (int i = 0; i < 5; i++) {
-      threadTitles.add(AnalyzedVideo.getRandomTitle());
-      threadSentiments.add(AnalyzedVideo.getRandomSentiment());
-      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-      threadUrls.add(AnalyzedVideo.getRandomUrl());
+    if (threadTitles.size() <= 0) {
+      for (int i = 0; i < 5; i++) {
+        threadTitles.add(AnalyzedVideo.getRandomTitle());
+        threadSentiments.add(AnalyzedVideo.getRandomSentiment());
+        threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
+        threadUrls.add(AnalyzedVideo.getRandomUrl());
+      }
     }
 
     threadInfoList.put(TITLE, threadTitles);
@@ -66,6 +69,7 @@ public class DataServlet extends HttpServlet {
     threadInfoList.put(URL, threadUrls);
 
     response.setContentType("application/json;");
+    response.getWriter().print(threadInfoList);
 
     // get sentiment properties from text
     Sentiment sentimentFromText = analyze.analyzeSentimentText("youtube comment text");

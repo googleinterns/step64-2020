@@ -71,7 +71,6 @@ public class AnalyzedVideo {
 
   public static String getRandomUrl() {
     return urlList.get(rand.nextInt(4));
-    
   }
 
   public String toString() {

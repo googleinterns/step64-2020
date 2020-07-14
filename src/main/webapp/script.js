@@ -17,6 +17,7 @@ function addThreads() {  // eslint-disable-line
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
+    console.log(threadInfoList);
     threadList.appendChild(loadList(threadInfoList));
   });
 }

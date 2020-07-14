@@ -58,23 +58,20 @@ public class AnalyzedVideo {
   }
 
   public static String getRandomTitle() {
-    String randomTitle = titlesList.get(rand.nextInt(4));
-    return randomTitle;
+    return titlesList.get(rand.nextInt(4));
   }
 
   public static double getRandomSentiment() {
-    double randomSentiment = sentimentList.get(rand.nextInt(4));
-    return randomSentiment;
+    return sentimentList.get(rand.nextInt(4));
   }
 
   public static int getRandomUpvote() {
-    int randomUpvote = upvotesList.get(rand.nextInt(4));
-    return randomUpvote;
+    return upvotesList.get(rand.nextInt(4));
   }
 
   public static String getRandomUrl() {
-    String randomUrl = urlList.get(rand.nextInt(4));
-    return randomUrl;
+    return urlList.get(rand.nextInt(4));
+    
   }
 
   public String toString() {

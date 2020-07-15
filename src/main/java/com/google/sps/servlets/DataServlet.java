@@ -70,11 +70,10 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     try {
       List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
-      response.setContentType("text/html;");
-      response.getWriter().println(newPost);
-    } catch (IOException | YoutubeApiException e) {
+    } catch (YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
-      response.sendError(500, "Server error");
+      response.sendError(500, "An error occurred while fetching Youtube Posts");
+      return;
     }
     if (threadTitles.size() <= 0) {
       for (int i = 0; i < 5; i++) {

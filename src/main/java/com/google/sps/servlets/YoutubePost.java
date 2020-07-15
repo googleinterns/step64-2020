@@ -31,8 +31,7 @@ public class YoutubePost {
   }
 
   public static String getUrl(String id) {
-    url = "https://www.youtube.com/watch?v=" + id;
-    return url;
+    return "https://www.youtube.com/watch?v=" + id;
   }
 
   @Override

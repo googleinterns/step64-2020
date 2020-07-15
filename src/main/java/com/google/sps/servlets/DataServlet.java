@@ -53,7 +53,7 @@ public class DataServlet extends HttpServlet {
       response.getWriter().println(newPost);
     } catch (IOException | YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
-      response.sendError(500);
+      response.sendError(500, "Server error");
     }
   }
 }

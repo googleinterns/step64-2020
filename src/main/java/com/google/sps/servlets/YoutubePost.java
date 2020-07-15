@@ -17,7 +17,6 @@ package com.google.sps.servlets;
 import com.google.sps.servlets.YoutubeApiException;
 
 /** Data model for a singular Youtube post that will be added into a list of posts. */
-
 public class YoutubePost {
   private final String title;
   private final String content;
@@ -32,7 +31,7 @@ public class YoutubePost {
   }
 
   public static String getUrl(String id) {
-    url = ("https://www.youtube.com/watch?v=" + id);
+    url = "https://www.youtube.com/watch?v=" + id;
     return url;
   }
 

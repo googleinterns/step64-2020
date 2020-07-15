@@ -24,7 +24,6 @@ import javax.xml.ws.http.HTTPException;
 /**The Youtube Api handles getting the request from Youtube by
 getting the service then populates the YoutubePost class with
 the video responses. */
-
 public class YoutubeApi {
   private static final String DEVELOPER_KEY = "AIzaSyCSxCO3BeXFt1lYAou94rtlyQhinc470So";
   private static final String APPLICATION_NAME = "Capstone Project";
@@ -50,9 +49,8 @@ public class YoutubeApi {
     List<YoutubePost> list = new ArrayList();
     String id = "Ks-_Mh1QhMc";
     try {
-      youtubeService = getService();
       VideoListResponse response =
-          youtubeService.videos().list("snippet").setKey(DEVELOPER_KEY).setId(id).execute();
+          getService().videos().list("snippet").setKey(DEVELOPER_KEY).setId(id).execute();
       Video video = response.getItems().get(0);
       YoutubePost newPost = new YoutubePost(
           video.getSnippet().getTitle(), video.getSnippet().getDescription(), video.getId());

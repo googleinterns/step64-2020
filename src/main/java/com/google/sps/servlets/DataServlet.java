@@ -13,7 +13,13 @@
 // limitations under the License.
 
 package com.google.sps;
-
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -23,14 +29,22 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.google.sps.servlets.YoutubeApi;
+import com.google.sps.servlets.YoutubeApiException;
+import com.google.sps.servlets.YoutubePost;
+import java.io.Console;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.http.HTTPException;
 import org.json.simple.JSONObject;
 
 /**
@@ -54,6 +68,13 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    try {
+      List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
+    } catch (YoutubeApiException e) {
+      System.out.println("Error: Youtube api returning exception" + e);
+      response.sendError(500, "An error occurred while fetching Youtube Posts");
+      return;
+    }
     if (threadTitles.size() <= 0) {
       for (int i = 0; i < 5; i++) {
         threadTitles.add(AnalyzedVideo.getRandomTitle());

@@ -44,7 +44,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.http.HTTPException;
 import org.json.simple.JSONObject;
 
 /**
@@ -92,7 +91,7 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json;");
     response.getWriter().print(threadInfoList);
 
-    // get sentiment properties from text
+    /*// get sentiment properties from text
     Sentiment sentimentFromText = analyze.analyzeSentimentText("youtube comment text");
     double sentimentScoreText = sentimentFromText.getScore();
     double magnitudeScoreText = sentimentFromText.getMagnitude();
@@ -101,6 +100,6 @@ public class DataServlet extends HttpServlet {
     // print the syntax in the text
     analyze.analyzeSyntaxText("youtube comment text");
     // print categories in text
-    analyze.entitySentimentText("youtube comment text");
+    analyze.entitySentimentText("youtube comment text");*/
   }
 }

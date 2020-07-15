@@ -4,7 +4,8 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.util.Random;
 
-public class AnalyzedThread {
+/** Represents a Video that's been analyzed by the NLP API */
+public class AnalyzedVideo {
   public final static ImmutableList<String> titlesList =
       ImmutableList.of("Where is this supposed to go?", "This program needs to work better",
           "The wifi needs to be more consistent", "This could be better",
@@ -15,26 +16,25 @@ public class AnalyzedThread {
   public final static ImmutableList<String> urlList =
       ImmutableList.of("http://www.youtube.com", "http://www.reddit.com", "http://www.facebook.com",
           "http://www.yahoo.com", "http://www.amazon.com");
+  private final static Random rand = new Random();
   private final String threadTitle;
   private final double sentiment;
   private final int upvotes;
   private final int timestamp;
   private final String threadUrl;
-  private final static Random rand = new Random();
 
-  private AnalyzedThread(
+  private AnalyzedVideo(
       String threadTitle, double sentiment, int upvotes, int timestamp, String threadUrl) {
     this.threadTitle = threadTitle;
     this.sentiment = sentiment;
     this.upvotes = upvotes;
     this.timestamp = timestamp;
     this.threadUrl = threadUrl;
-    // this.subject = subject;
   }
 
-  public static AnalyzedThread createThread(
+  public static AnalyzedVideo createThread(
       String threadTitle, double sentiment, int upvotes, int timestamp, String threadUrl) {
-    return new AnalyzedThread(threadTitle, sentiment, upvotes, timestamp, threadUrl);
+    return new AnalyzedVideo(threadTitle, sentiment, upvotes, timestamp, threadUrl);
   }
 
   public String title() {
@@ -45,7 +45,7 @@ public class AnalyzedThread {
     return sentiment;
   }
 
-  public int upvotes() {
+  public int upvote() {
     return upvotes;
   }
 
@@ -57,24 +57,20 @@ public class AnalyzedThread {
     return threadUrl;
   }
 
-  public static String RandomTitle() {
-    String StringValue = titlesList.get(rand.nextInt(4));
-    return StringValue;
+  public static String getRandomTitle() {
+    return titlesList.get(rand.nextInt(4));
   }
 
-  public static double RandomSentiment() {
-    double SentimentValue = sentimentList.get(rand.nextInt(4));
-    return SentimentValue;
+  public static double getRandomSentiment() {
+    return sentimentList.get(rand.nextInt(4));
   }
 
-  public static int RandomUpvotes() {
-    int UpvotesValue = upvotesList.get(rand.nextInt(4));
-    return UpvotesValue;
+  public static int getRandomUpvote() {
+    return upvotesList.get(rand.nextInt(4));
   }
 
-  public static String RandomUrl() {
-    String UrlValue = urlList.get(rand.nextInt(4));
-    return UrlValue;
+  public static String getRandomUrl() {
+    return urlList.get(rand.nextInt(4));
   }
 
   public String toString() {

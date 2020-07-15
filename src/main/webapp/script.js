@@ -17,53 +17,75 @@ function addThreads() {  // eslint-disable-line
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
-
-    for (let i = 0; i < threadInfoList.length; i += 4) {
-      // create description
-      const ulid = 'ul' + i;
-      const lidescription = document.createElement('li');
-      lidescription.innerText = 'Description';
-      lidescription.className = 'description-li';
-      const description = document.createElement('ul');
-      description.appendChild(lidescription);
-      description.appendChild(
-          createListElement('sentiment:' + threadInfoList[i + 1]));
-      description.appendChild(
-          createListElement('upvotes: ' + threadInfoList[i + 2]));
-      description.appendChild(linkListElement(threadInfoList[i + 3]));
-      description.className = ('description');
-      description.setAttribute('id', ulid);
-      // create description
-      const thread = createButtonElement(threadInfoList[i], i);
-      threadList.appendChild(thread);
-      threadList.appendChild(description);
-    }
+    console.log(threadInfoList);
+    threadList.appendChild(loadList(threadInfoList));
   });
 }
 
-/** Creates an <li> element containing text. */
-function createListElement(text) {
+function loadList(list) {
+  const div = document.createElement('div');
+  div.id = 'Dividor';
+  for (let i = 0; i < list.sentiment.length; i++) {
+    const description = createDescription(list, i);
+    const button = createTitleButton(list, i);
+    div.appendChild(button);
+    div.appendChild(description);
+  }
+  return div;
+}
+
+function createDescription(list, index) {
+  const threadDescription = document.createElement('ul');
+  const liDescription = document.createElement('li');
+  liDescription.innerText = 'Description';
+  liDescription.className = 'description-li';
+  threadDescription.appendChild(liDescription);
+  threadDescription.appendChild(
+      createLiElement('Sentiment Value: ' + list.sentiment[index]));
+  threadDescription.appendChild(
+      createLiElement('Upvotes: ' + list.upvotes[index]));
+  threadDescription.appendChild(linkListElement(list.url[index]));
+  threadDescription.className = 'description';
+  threadDescription.id = 'ul' + index;
+  return threadDescription;
+}
+
+function createTitleButton(list, index) {
+  const titleButton = document.createElement('button');
+  titleButton.innerText = list.title[index];
+  titleButton.className = 'thread';
+  return titleButton;
+}
+
+
+function createLiElement(text) {
   const liElement = document.createElement('li');
   liElement.innerText = text;
   return liElement;
 }
 
-/** Creates a <button> element displaying text */
-function createButtonElement(text, index) {
-  const buttonid = 'button' + index;
-  const buttonElement = document.createElement('button');
-  buttonElement.innerText = text;
-  buttonElement.className = 'thread';
-  buttonElement.setAttribute('id', buttonid);
-  return buttonElement;
+function linkListElement(url) {
+  const liElement = document.createElement('li');
+  const aElement = document.createElement('a');
+  aElement.href = url;
+  aElement.innerText = 'See Youtube Video';
+  liElement.appendChild(aElement);
+  return liElement;
 }
 
-/** Creates a <a> element that is appended to li element */
-function linkListElement(url) {
-  const aElement = document.createElement('a');
-  const link = document.createElement('li');
-  aElement.href = url;
-  aElement.innerText = 'See the Thread on Reddit';
-  link.appendChild(aElement);
-  return link;
+/** TODO: Create Pagination for Dashboard*/
+
+/** Retrieves the previous page */
+function previous() {  // eslint-disable-line
+  /**   TODO */
+}
+
+/** Retrieves the next page */
+function next() {  // eslint-disable-line
+  /**   TODO */
+}
+
+/** Retrieves the specificied page number */
+function numberPage(pageNumber) {  // eslint-disable-line
+  /**   TODO */
 }

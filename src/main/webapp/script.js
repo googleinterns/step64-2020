@@ -13,7 +13,79 @@
 // limitations under the License.
 
 function addThreads() {  // eslint-disable-line
-  fetch('/data').then((response) => response.text()).then((quote) => {
-    document.getElementById('thread-container').innerText = quote;
+  const url = '/data';
+  fetch(url).then((response) => response.json()).then((threadInfoList) => {
+    const threadList = document.getElementById('thread-container');
+    threadList.innerHTML = '';
+    console.log(threadInfoList);
+    threadList.appendChild(loadList(threadInfoList));
   });
+}
+
+function loadList(list) {
+  const div = document.createElement('div');
+  div.id = 'Dividor';
+  for (let i = 0; i < list.sentiment.length; i++) {
+    const description = createDescription(list, i);
+    const button = createTitleButton(list, i);
+    div.appendChild(button);
+    div.appendChild(description);
+  }
+  return div;
+}
+
+function createDescription(list, index) {
+  const threadDescription = document.createElement('ul');
+  const liDescription = document.createElement('li');
+  liDescription.innerText = 'Description';
+  liDescription.className = 'description-li';
+  threadDescription.appendChild(liDescription);
+  threadDescription.appendChild(
+      createLiElement('Sentiment Value: ' + list.sentiment[index]));
+  threadDescription.appendChild(
+      createLiElement('Upvotes: ' + list.upvotes[index]));
+  threadDescription.appendChild(linkListElement(list.url[index]));
+  threadDescription.className = 'description';
+  threadDescription.id = 'ul' + index;
+  return threadDescription;
+}
+
+function createTitleButton(list, index) {
+  const titleButton = document.createElement('button');
+  titleButton.innerText = list.title[index];
+  titleButton.className = 'thread';
+  return titleButton;
+}
+
+
+function createLiElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
+
+function linkListElement(url) {
+  const liElement = document.createElement('li');
+  const aElement = document.createElement('a');
+  aElement.href = url;
+  aElement.innerText = 'See Youtube Video';
+  liElement.appendChild(aElement);
+  return liElement;
+}
+
+/** TODO: Create Pagination for Dashboard*/
+
+/** Retrieves the previous page */
+function previous() {  // eslint-disable-line
+  /**   TODO */
+}
+
+/** Retrieves the next page */
+function next() {  // eslint-disable-line
+  /**   TODO */
+}
+
+/** Retrieves the specificied page number */
+function numberPage(pageNumber) {  // eslint-disable-line
+  /**   TODO */
 }

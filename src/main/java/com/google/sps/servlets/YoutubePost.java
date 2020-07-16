@@ -21,7 +21,7 @@ public class YoutubePost {
   private final String title;
   private final String content;
   private static String url;
-  private final String id;
+  private static String id;
 
   public YoutubePost(String title, String content, String id) {
     this.title = title;
@@ -32,6 +32,18 @@ public class YoutubePost {
 
   public static String getUrl(String id) {
     return "https://www.youtube.com/watch?v=" + id;
+  }
+
+  public static String getID() {
+    return id;
+  }
+
+  public String getContent() {
+    return content;
+  }
+
+  public String getTitle() {
+    return title;
   }
 
   @Override

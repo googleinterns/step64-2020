@@ -1,4 +1,4 @@
-package com.google.sps;
+package com.google.sps.servlets;
 
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
@@ -8,8 +8,7 @@ import java.util.Random;
 /** Represents a Video that's been analyzed by the NLP API */
 public class AnalyzedVideo {
     private final static Analyze analyze = new Analyze();
-
-  public final static ImmutableList<String> titlesList =
+      public final static ImmutableList<String> titlesList =
       ImmutableList.of("Where is this supposed to go?", "This program needs to work better",
           "The wifi needs to be more consistent", "This could be better",
           "Maybe this could be structured a different way");

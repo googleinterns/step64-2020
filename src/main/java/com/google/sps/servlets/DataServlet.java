@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps;
+package com.google.sps.servlets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -68,8 +68,9 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<YoutubePost> newPost;
     try {
-      List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
+      newPost = YoutubeApi.getYoutubePost();
     } catch (YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
       response.sendError(500, "An error occurred while fetching Youtube Posts");
@@ -77,10 +78,10 @@ public class DataServlet extends HttpServlet {
     }
     if (threadTitles.size() <= 0) {
       for (int i = 0; i < 5; i++) {
-        threadTitles.add(AnalyzedVideo.getRandomTitle());
-        threadSentiments.add(AnalyzedVideo.getSentiment(threadTitles.get(i)));
+        threadTitles.add(newPost.get(0).getTitle());
+        threadSentiments.add(AnalyzedVideo.getSentiment(newPost.get(0).getContent()));
         threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-        threadUrls.add(AnalyzedVideo.getRandomUrl());
+        threadUrls.add(newPost.get(0).getUrl(newPost.get(0).getID()));
       }
     }
 

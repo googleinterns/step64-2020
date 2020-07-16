@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.sps;
+package com.google.sps.servlets;
 import com.google.cloud.language.v1.AnalyzeEntitiesRequest;
 import com.google.cloud.language.v1.AnalyzeEntitiesResponse;
 import com.google.cloud.language.v1.AnalyzeEntitySentimentRequest;

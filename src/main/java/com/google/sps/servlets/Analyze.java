@@ -95,6 +95,13 @@ public class Analyze {
     }
   }
 
+  /** Returns rounded sentiment score from text. */
+  public double getSentimentScore(String text) throws IOException {
+    Sentiment sentimentFromText = analyzeSentimentText(text);
+    double score = Math.round(sentimentFromText.getScore() * 100.0) / 100.0;
+    return score;
+  }
+
   /** Gets Sentiment from the contents of the GCS hosted file. */
   public Sentiment analyzeSentimentFile(String gcsUri) throws IOException {
     // Instantiate the Language client com.google.cloud.language.v1.LanguageServiceClient

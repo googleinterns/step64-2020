@@ -63,11 +63,6 @@ public class AnalyzedVideo {
     return titlesList.get(rand.nextInt(4));
   }
 
-  public static double getSentiment(String text) throws IOException {
-    Sentiment sentimentFromText = analyze.analyzeSentimentText(text);
-    return sentimentFromText.getScore();
-  }
-
   public static int getRandomUpvote() {
     return upvotesList.get(rand.nextInt(4));
   }

@@ -67,9 +67,9 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<YoutubePost> newPost;
+    List<YoutubePost> newPosts;
     try {
-      newPost = YoutubeApi.getYoutubePost();
+      newPosts = YoutubeApi.getYoutubePost();
     } catch (YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
       response.sendError(500, "An error occurred while fetching Youtube Posts");
@@ -77,10 +77,10 @@ public class DataServlet extends HttpServlet {
     }
     if (threadTitles.size() <= 0) {
       for (int i = 0; i < 5; i++) {
-        threadTitles.add(newPost.get(0).getTitle());
-        threadSentiments.add(AnalyzedVideo.getSentiment(newPost.get(0).getContent()));
+        threadTitles.add(newPosts.get(0).getTitle());
+        threadSentiments.add(analyze.getSentimentScore(newPosts.get(0).getContent()));
         threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-        threadUrls.add(newPost.get(0).getUrl(newPost.get(0).getID()));
+        threadUrls.add(newPosts.get(0).getUrl());
       }
     }
 

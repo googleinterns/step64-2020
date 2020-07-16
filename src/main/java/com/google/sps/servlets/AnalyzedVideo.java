@@ -1,14 +1,14 @@
 package com.google.sps.servlets;
 
+import com.google.cloud.language.v1.Sentiment;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
-import com.google.cloud.language.v1.Sentiment;
 import java.util.Random;
 
 /** Represents a Video that's been analyzed by the NLP API */
 public class AnalyzedVideo {
-    private final static Analyze analyze = new Analyze();
-      public final static ImmutableList<String> titlesList =
+  private final static Analyze analyze = new Analyze();
+  public final static ImmutableList<String> titlesList =
       ImmutableList.of("Where is this supposed to go?", "This program needs to work better",
           "The wifi needs to be more consistent", "This could be better",
           "Maybe this could be structured a different way");
@@ -64,8 +64,8 @@ public class AnalyzedVideo {
   }
 
   public static double getSentiment(String text) throws IOException {
-      Sentiment sentimentFromText = analyze.analyzeSentimentText(text);
-      return sentimentFromText.getScore();
+    Sentiment sentimentFromText = analyze.analyzeSentimentText(text);
+    return sentimentFromText.getScore();
   }
 
   public static int getRandomUpvote() {

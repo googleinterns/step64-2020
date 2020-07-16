@@ -92,6 +92,5 @@ public class DataServlet extends HttpServlet {
 
     response.setContentType("application/json;");
     response.getWriter().print(threadInfoList);
-
   }
 }

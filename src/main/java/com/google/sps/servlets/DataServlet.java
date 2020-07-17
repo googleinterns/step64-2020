@@ -75,20 +75,17 @@ public class DataServlet extends HttpServlet {
       response.sendError(500, "An error occurred while fetching Youtube Posts");
       return;
     }
-    if (threadTitles.size() <= 0) {
-      for (int i = 0; i < 5; i++) {
-        threadTitles.add(newPosts.get(0).getTitle());
-        threadSentiments.add(analyze.getSentimentScore(newPosts.get(0).getContent()));
-        threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-        threadUrls.add(newPosts.get(0).getUrl());
-      }
+    for (YoutubePost post : newPosts) {
+      threadTitles.add(post.getTitle());
+      threadSentiments.add(analyze.getSentimentScore(post.getContent()));
+      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
+      threadUrls.add(post.getUrl());
+
+      threadInfoList.put(TITLE, threadTitles);
+      threadInfoList.put(SENTIMENT, threadSentiments);
+      threadInfoList.put(UPVOTES, threadUpvotes);
+      threadInfoList.put(URL, threadUrls);
     }
-
-    threadInfoList.put(TITLE, threadTitles);
-    threadInfoList.put(SENTIMENT, threadSentiments);
-    threadInfoList.put(UPVOTES, threadUpvotes);
-    threadInfoList.put(URL, threadUrls);
-
     response.setContentType("application/json;");
     response.getWriter().print(threadInfoList);
   }

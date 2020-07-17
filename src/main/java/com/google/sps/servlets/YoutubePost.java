@@ -20,26 +20,38 @@ import com.google.sps.servlets.YoutubeApiException;
 public class YoutubePost {
   private final String title;
   private final String content;
-  private static String url;
+  private final String url;
   private final String id;
 
   public YoutubePost(String title, String content, String id) {
     this.title = title;
     this.content = content;
     this.id = id;
-    this.url = getUrl(id);
+    this.url = "https://www.youtube.com/watch?v=" + id;
   }
 
-  public static String getUrl(String id) {
-    return "https://www.youtube.com/watch?v=" + id;
+  public String getUrl() {
+    return this.url;
+  }
+
+  public String getID() {
+    return this.id;
+  }
+
+  public String getContent() {
+    return this.content;
+  }
+
+  public String getTitle() {
+    return this.title;
   }
 
   @Override
   public String toString() {
-    String post = ("title: " + title + "\n"
-        + "Description: " + content + "\n"
-        + "Id: " + id + "\n"
-        + "Url: " + url);
+    String post = ("title: " + this.title + "\n"
+        + "Description: " + this.content + "\n"
+        + "Id: " + this.id + "\n"
+        + "Url: " + this.url);
     return post;
   }
 }

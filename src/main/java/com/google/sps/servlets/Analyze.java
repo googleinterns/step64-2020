@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.sps;
+package com.google.sps.servlets;
 import com.google.cloud.language.v1.AnalyzeEntitiesRequest;
 import com.google.cloud.language.v1.AnalyzeEntitiesResponse;
 import com.google.cloud.language.v1.AnalyzeEntitySentimentRequest;
@@ -93,6 +93,13 @@ public class Analyze {
       Document doc = Document.newBuilder().setContent(text).setType(Type.PLAIN_TEXT).build();
       return analyzeSentiment(doc, language);
     }
+  }
+
+  /** Returns rounded sentiment score from text. */
+  public double getSentimentScore(String text) throws IOException {
+    Sentiment sentimentFromText = analyzeSentimentText(text);
+    double score = Math.round(sentimentFromText.getScore() * 100.0) / 100.0;
+    return score;
   }
 
   /** Gets Sentiment from the contents of the GCS hosted file. */

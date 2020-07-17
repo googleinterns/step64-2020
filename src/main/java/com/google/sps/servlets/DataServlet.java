@@ -49,7 +49,7 @@ import org.json.simple.JSONObject;
 /**
  * Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video
  */
-@WebServlet("/data1")
+@WebServlet("/videos-sentiment")
 public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";

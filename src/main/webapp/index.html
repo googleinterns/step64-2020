@@ -9,6 +9,16 @@
   <body onload="addThreads()">
     <div id="content">
       <h1>Youtube Comment Dashboard</h1>
+      <div class="sentimentKey">
+        Sentiment Key
+        <span class="sentimentText">
+          Sentiment Key: <br />
+          Range = [-1, 1] <br />
+          -1 = Very bad <br />
+          1 = Very Good <br />
+          0 = Neutral <br />
+        </span>
+      </div>
       <div id="thread-container"></div>
       <button type="button" id="previous" onclick="previous()" value="Previous">Previous</button>
       <span>Page</span>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.sps;
+package com.google.sps.servlets;
 
 import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.language.v1.PartOfSpeech.Tag;

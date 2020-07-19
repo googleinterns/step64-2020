@@ -32,19 +32,16 @@ ul.description {
 }
 .sentimentKey .sentimentText {
   visibility: hidden;
-  width: 120px;
+  width: 160px;
   background-color: #555;
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 5px 0;
   position: absolute;
   z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -60px;
-  opacity: 0;
-  transition: opacity 0.3s;
+  top: -5px;
+  left: 105%;
 }
 .sentimentKey:hover .sentimentText {
   visibility: visible;

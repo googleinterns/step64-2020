@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
-  <body onload ="addThreads()">
+  <body onload="addThreads()">
     <div id="content">
       <h1>Youtube Comment Dashboard</h1>
       <div class="sentimentKey">
@@ -21,10 +21,10 @@
         </div>
       </div>
       <div id="thread-container"></div>
-      <button type="button" id= "previous" onclick="previous()" value="Previous">Previous</button>
+      <button type="button" id="previous" onclick="previous()" value="Previous">Previous</button>
       <span>Page</span>
-      <select name ="pageNumber" id="pageNumber" onchange="numberPage(value)"></select> 
-      <span id ="amountOfPages"> </span>
+      <select name="pageNumber" id="pageNumber" onchange="numberPage(value)"></select>
+      <span id="amountOfPages"> </span>
       <button type="button" id="next" onclick="next()" value="Next">Next</button>
     </div>
   </body>

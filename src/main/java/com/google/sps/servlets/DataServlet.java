@@ -29,12 +29,12 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
-import java.lang.Math;
 import com.google.sps.servlets.YoutubeApi;
 import com.google.sps.servlets.YoutubeApiException;
 import com.google.sps.servlets.YoutubePost;
 import java.io.Console;
 import java.io.IOException;
+import java.lang.Math;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,12 +55,12 @@ public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";
   private static final String SENTIMENT = "sentiment";
-  private static final String UPVOTES = "upvotes";
+  private static final String LIKES = "likes";
   private static final String URL = "url";
-  private  List<String> threadTitles = new ArrayList<String>();
-  private  List<Double> threadSentiments = new ArrayList<Double>();
-  private  List<Integer> threadUpvotes = new ArrayList<Integer>();
-  private  List<String> threadUrls = new ArrayList<String>();
+  private List<String> threadTitles = new ArrayList<String>();
+  private List<Double> threadSentiments = new ArrayList<Double>();
+  private List<Integer> threadLikes = new ArrayList<Integer>();
+  private List<String> threadUrls = new ArrayList<String>();
   private final JSONObject threadInfoList = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -68,56 +68,52 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    /*List<YoutubePost> newPosts;
+    List<YoutubePost> newPosts;
     try {
       newPosts = YoutubeApi.getYoutubePost();
     } catch (YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
       response.sendError(500, "An error occurred while fetching Youtube Posts");
       return;
-    }*/
+    }
+
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
 
     threadTitles.clear();
     threadSentiments.clear();
-    threadUpvotes.clear();
+    threadLikes.clear();
     threadUrls.clear();
-
-    for(int i = 0; i< 1; i++){
-        threadTitles.add("Word"+i);
-        threadUpvotes.add(i);
-        threadSentiments.add(i*2.3);
-        threadUrls.add("https://beginnersbook.com/2013/12/how-to-get-sublist-of-an-arraylist-with-example/");
+    for (YoutubePost post : newPosts) {
+      threadTitles.add(post.getTitle());
+      threadSentiments.add(analyze.getSentimentScore(post.getContent()));
+      threadLikes.add(AnalyzedVideo.getRandomUpvote());
+      threadUrls.add(post.getUrl());
     }
-    int numOfPages = (int) Math.ceil(threadTitles.size()/postPerPage);
+
+    int numOfPages = (int) Math.ceil(threadTitles.size() / postPerPage);
     createCurrentPage(currentPage, postPerPage);
-    if (numOfPages == 0){
-        numOfPages++;
+    if (numOfPages == 0) {
+      numOfPages++;
     }
     threadInfoList.put("numOfPages", numOfPages);
     threadInfoList.put(TITLE, threadTitles);
     threadInfoList.put(SENTIMENT, threadSentiments);
-    threadInfoList.put(UPVOTES, threadUpvotes);
+    threadInfoList.put(LIKES, threadLikes);
     threadInfoList.put(URL, threadUrls);
-    /*for (YoutubePost post : newPosts) {
-      threadTitles.add(post.getTitle());
-      threadSentiments.add(analyze.getSentimentScore(post.getContent()));
-      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-      threadUrls.add(post.getUrl()); 
-    }*/
+
     response.setContentType("application/json;");
     response.getWriter().print(threadInfoList);
   }
-  private void createCurrentPage(int currentPage, int postPerPage){
-    int start = (currentPage-1) * postPerPage;
+  private void createCurrentPage(int currentPage, int postPerPage) {
+    int start = (currentPage - 1) * postPerPage;
     int end = currentPage * postPerPage;
-    if (threadTitles.size() < end){
-        end = threadTitles.size();
+    if (threadTitles.size() < end) {
+      end = threadTitles.size();
     }
-    threadTitles = threadTitles.subList(start,end);
-    threadSentiments = threadSentiments.subList(start,end);
-    threadUpvotes = threadUpvotes.subList(start, end);
+    threadTitles = threadTitles.subList(start, end);
+    threadSentiments = threadSentiments.subList(start, end);
+    threadLikes = threadLikes.subList(start, end);
     threadUrls = threadUrls.subList(start, end);
   }
 

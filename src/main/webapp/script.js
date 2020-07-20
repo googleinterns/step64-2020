@@ -11,16 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-var currentPage = 1;
-var postperPage = 10;
-var numberOfPages = 1;
+let currentPage = 1;
+const postperPage = 10;
+let numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line
-  const url = '/videos-sentiment?currentPage='+ currentPage + '&postPerPage='+ postperPage;
+  const url = '/videos-sentiment?currentPage=' + currentPage +
+      '&postPerPage=' + postperPage;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
-    numberOfPages= threadInfoList.numOfPages;
+    numberOfPages = threadInfoList.numOfPages;
     createPageOptions();
     check();
     threadList.appendChild(loadList(threadInfoList));
@@ -47,8 +48,7 @@ function createDescription(list, index) {
   threadDescription.appendChild(liDescription);
   threadDescription.appendChild(
       createLiElement('Sentiment Value: ' + list.sentiment[index]));
-  threadDescription.appendChild(
-      createLiElement('Upvotes: ' + list.upvotes[index]));
+  threadDescription.appendChild(createLiElement('Likes: ' + list.likes[index]));
   threadDescription.appendChild(linkListElement(list.url[index]));
   threadDescription.className = 'description';
   threadDescription.id = 'ul' + index;
@@ -80,8 +80,8 @@ function linkListElement(url) {
 
 /** Retrieves the previous page */
 function previous() {  // eslint-disable-line
-  try{
-    if (currentPage == 1) throw 'This is the first page'
+  try {
+    if (currentPage == 1) throw new Error('This is the first page');
     currentPage--;
     addThreads();
   } catch (err) {
@@ -91,8 +91,8 @@ function previous() {  // eslint-disable-line
 
 /** Retrieves the next page */
 function next() {  // eslint-disable-line
-  try{
-    if (currentPage == numberOfPages) throw 'This is the last Page'
+  try {
+    if (currentPage == numberOfPages) throw new Error('This is the last Page');
     currentPage++;
     addThreads();
   } catch (err) {
@@ -106,21 +106,22 @@ function numberPage(pageNumber) {  // eslint-disable-line
   addThreads();
 }
 function check() {
-    document.getElementById("next").disabled = currentPage >= numberOfPages ? true : false;
-    document.getElementById("previous").disabled = currentPage == 1 ? true : false;
+  document.getElementById('next').disabled =
+      currentPage >= numberOfPages ? true : false;
+  document.getElementById('previous').disabled =
+      currentPage == 1 ? true : false;
 }
 
-function createPageOptions() { 
-    const select = document.getElementById('pageNumber');
-    select.innerHTML = '';
-    for(let i =1; i<= numberOfPages; i++){
-      console.log(i);
-      const pageOption = document.createElement('option');
-      pageOption.appendChild(document.createTextNode(i));
-      pageOption.value = i;
-      select.appendChild(pageOption);
-    }
-    const amountOfPages = document.getElementById('amountOfPages');
-    amountOfPages.innerHTML = '';
-    amountOfPages.appendChild(' of '+ currentPage);
+function createPageOptions() {
+  const select = document.getElementById('pageNumber');
+  select.innerHTML = '';
+  for (let i = 1; i <= numberOfPages; i++) {
+    const pageOption = document.createElement('option');
+    pageOption.appendChild(document.createTextNode(i));
+    pageOption.value = i;
+    select.appendChild(pageOption);
+  }
+  const amountOfPages = document.getElementById('amountOfPages');
+  amountOfPages.innerHTML = '';
+  amountOfPages.appendChild(document.createTextNode(' of ' + currentPage));
 }

@@ -105,6 +105,8 @@ function numberPage(pageNumber) {  // eslint-disable-line
   currentPage = pageNumber;
   addThreads();
 }
+
+/** Check if previous and next buttons can go onto next or not */
 function check() {
   document.getElementById('next').disabled =
       currentPage >= numberOfPages ? true : false;
@@ -112,6 +114,7 @@ function check() {
       currentPage == 1 ? true : false;
 }
 
+/** Create a option for page selector */
 function createPageOptions() {
   const select = document.getElementById('pageNumber');
   select.innerHTML = '';

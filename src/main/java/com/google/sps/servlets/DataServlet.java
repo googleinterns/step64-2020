@@ -57,6 +57,7 @@ public class DataServlet extends HttpServlet {
   private static final String SENTIMENT = "sentiment";
   private static final String LIKES = "likes";
   private static final String URL = "url";
+  private static final String NUMOFPAGES = "numOfPages";
   private List<String> threadTitles = new ArrayList<String>();
   private List<Double> threadSentiments = new ArrayList<Double>();
   private List<Integer> threadLikes = new ArrayList<Integer>();
@@ -96,7 +97,7 @@ public class DataServlet extends HttpServlet {
     if (numOfPages == 0) {
       numOfPages++;
     }
-    threadInfoList.put("numOfPages", numOfPages);
+    threadInfoList.put(NUMOFPAGES, numOfPages);
     threadInfoList.put(TITLE, threadTitles);
     threadInfoList.put(SENTIMENT, threadSentiments);
     threadInfoList.put(LIKES, threadLikes);
@@ -105,11 +106,12 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json;");
     response.getWriter().print(threadInfoList);
   }
+
   private void createCurrentPage(int currentPage, int postPerPage) {
     int start = (currentPage - 1) * postPerPage;
     int end = currentPage * postPerPage;
     if (threadTitles.size() < end) {
-      end = threadTitles.size();
+      end = Math.min(threadTitles.size(), end);
     }
     threadTitles = threadTitles.subList(start, end);
     threadSentiments = threadSentiments.subList(start, end);
@@ -123,11 +125,6 @@ public class DataServlet extends HttpServlet {
       convertee = Integer.parseInt(beingconverted);
     } catch (NumberFormatException e) {
       System.err.println("Could not convert to int: " + beingconverted);
-      return 1;
-    }
-
-    if (convertee < 1 || convertee > 10) {
-      System.err.println("Number must be between 1 and 10");
       return 1;
     }
     return convertee;

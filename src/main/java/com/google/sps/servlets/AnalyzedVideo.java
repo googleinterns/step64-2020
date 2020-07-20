@@ -6,14 +6,14 @@ import java.util.Random;
 
 /** Represents a Video that's been analyzed by the NLP API */
 public class AnalyzedVideo {
-  public final static ImmutableList<String> titlesList =
+  private final static ImmutableList<String> titlesList =
       ImmutableList.of("Where is this supposed to go?", "This program needs to work better",
           "The wifi needs to be more consistent", "This could be better",
           "Maybe this could be structured a different way");
-  public final ImmutableList<Double> sentimentList =
+  private final static ImmutableList<Double> sentimentList =
       ImmutableList.of(-.3, -.5, -.1, -.2, -.5);
-  public final ImmutableList<Integer> upvotesList = ImmutableList.of(30, 50, 10, 5, 12);
-  public final ImmutableList<String> urlList =
+  private final static ImmutableList<Integer> upvotesList = ImmutableList.of(30, 50, 10, 5, 12);
+  private final static ImmutableList<String> urlList =
       ImmutableList.of("http://www.youtube.com", "http://www.reddit.com", "http://www.facebook.com",
           "http://www.yahoo.com", "http://www.amazon.com");
   private final static Random rand = new Random();

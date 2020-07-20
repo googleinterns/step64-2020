@@ -11,13 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+var currentPage = 1;
+var postperPage = 10;
+var order = "no-order";
 
 function addThreads() {  // eslint-disable-line
-  const url = '/data';
+    order = document.getElementById('Sort').value;
+  const url = '/data?=currentPage'+ currentPage + '&=postperPage'+ postperPage+'&order'+order;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
-    console.log(threadInfoList);
+    createpageOptions(threadInfoList.numOfPages[0]);
     threadList.appendChild(loadList(threadInfoList));
   });
 }
@@ -88,4 +92,14 @@ function next() {  // eslint-disable-line
 /** Retrieves the specificied page number */
 function numberPage(pageNumber) {  // eslint-disable-line
   /**   TODO */
+}
+
+function createpageOptions(numberOfPages){
+  const select = document.getElementById('pageNumber');
+  for (let i = 1; i<= numberOfPages; i++){
+      const pageOption = document.createElement('option');
+      pageOption.innerText = i;
+      pageOption.value = i;
+      select.appendChild(pageOption);
+  }
 }

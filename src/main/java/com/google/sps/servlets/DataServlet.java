@@ -29,6 +29,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import java.lang.Math;
 import com.google.sps.servlets.YoutubeApi;
 import com.google.sps.servlets.YoutubeApiException;
 import com.google.sps.servlets.YoutubePost;
@@ -56,10 +57,10 @@ public class DataServlet extends HttpServlet {
   private static final String SENTIMENT = "sentiment";
   private static final String UPVOTES = "upvotes";
   private static final String URL = "url";
-  private static List<String> threadTitles = new ArrayList<String>();
-  private static List<Double> threadSentiments = new ArrayList<Double>();
-  private static List<Integer> threadUpvotes = new ArrayList<Integer>();
-  private static List<String> threadUrls = new ArrayList<String>();
+  private  List<String> threadTitles = new ArrayList<String>();
+  private  List<Double> threadSentiments = new ArrayList<Double>();
+  private  List<Integer> threadUpvotes = new ArrayList<Integer>();
+  private  List<String> threadUrls = new ArrayList<String>();
   private final JSONObject threadInfoList = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -67,22 +68,23 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    try {
+    /*try {
       List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
     } catch (YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
       response.sendError(500, "An error occurred while fetching Youtube Posts");
       return;
-    }
-    if (threadTitles.size() <= 0) {
-      for (int i = 0; i < 5; i++) {
-        threadTitles.add(AnalyzedVideo.getRandomTitle());
-        threadSentiments.add(AnalyzedVideo.getRandomSentiment());
-        threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-        threadUrls.add(AnalyzedVideo.getRandomUrl());
-      }
-    }
+    }*/
+    int currentPage = convertToInt(request.getParameter("currentPage"));
+    int postperPage = convertToInt(request.getParameter("postPerPage"));
+    String order = request.getParameter("order");
 
+    threadTitles.clear();
+    threadSentiments.clear();
+    threadUpvotes.clear();
+    threadUrls.clear();
+    
+    threadInfoList.put("numOfPages", calculateNumOfPages(threadTitle.size()));
     threadInfoList.put(TITLE, threadTitles);
     threadInfoList.put(SENTIMENT, threadSentiments);
     threadInfoList.put(UPVOTES, threadUpvotes);
@@ -101,5 +103,23 @@ public class DataServlet extends HttpServlet {
     analyze.analyzeSyntaxText("youtube comment text");
     // print categories in text
     analyze.entitySentimentText("youtube comment text");*/
+  }
+  private int calculateNumOfPages(int postPerPage, int numOfPages) {
+      return (int) Math.ceil(numOfPages/postPerPage);
+  }
+  private int convertToInt(String beingconverted) {
+    int convertee;
+    try {
+      convertee = Integer.parseInt(beingconverted);
+    } catch (NumberFormatException e) {
+      System.err.println("Could not convert to int: " + beingconverted);
+      return 1;
+    }
+
+    if (convertee < 1 || convertee > 10) {
+      System.err.println("Number must be between 1 and 10");
+      return 1;
+    }
+    return convertee;
   }
 }

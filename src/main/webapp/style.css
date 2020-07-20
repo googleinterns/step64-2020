@@ -25,3 +25,25 @@ ul.description {
   padding: 10px;
   margin-bottom: 10px;
 }
+.sentimentKey {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+.sentimentKey .sentimentText {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  left: 105%;
+}
+.sentimentKey:hover .sentimentText {
+  visibility: visible;
+  opacity: 1;
+}

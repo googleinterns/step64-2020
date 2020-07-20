@@ -15,6 +15,15 @@
 package com.google.sps.servlets;
 
 import com.google.sps.servlets.YoutubeApiException;
+import com.google.api.services.youtube.model.CommentListResponse;
+import com.google.api.services.youtube.YouTube.CommentThreads;
+import com.google.sps.servlets.YoutubeApi;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
+import java.util.List;
+
+
 
 /** Data model for a singular Youtube post that will be added into a list of posts. */
 public class YoutubePost {
@@ -22,13 +31,22 @@ public class YoutubePost {
   private final String content;
   private static String url;
   private final String id;
+  private static String timeStamp;
+  
 
   public YoutubePost(String title, String content, String id) {
     this.title = title;
     this.content = content;
     this.id = id;
     this.url = getUrl(id);
+    this.comments = getComments();
   }
+
+  public String getContent() {
+      return content;
+  }
+
+
 
   public static String getUrl(String id) {
     return "https://www.youtube.com/watch?v=" + id;

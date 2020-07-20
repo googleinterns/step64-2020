@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
+import com.google.api.services.youtube.model.CommentListResponse;
+import com.google.api.services.youtube.YouTube.CommentThreads;
 
 /**The Youtube Api handles getting the request from Youtube by
 getting the service then populates the YoutubePost class with
@@ -30,6 +32,7 @@ public class YoutubeApi {
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final Object SERVICE_LOCK = new Object();
   private static YouTube youtubeService;
+  private static String timeStamp;
 
   private static YouTube getService() throws GeneralSecurityException, IOException {
     if (youtubeService == null) {
@@ -54,7 +57,15 @@ public class YoutubeApi {
       Video video = response.getItems().get(0);
       YoutubePost newPost = new YoutubePost(
           video.getSnippet().getTitle(), video.getSnippet().getDescription(), video.getId());
-      list.add(newPost);
+      list.add(newPost); 
+
+      YouTube.CommentThreads.List request = getService().commentThreads()
+            .list("snippet,replies");
+        CommentThreadListResponse comments = request.setKey(DEVELOPER_KEY)
+            .setVideoId(video.getId())
+            .setMaxResults(5L)
+            .execute();
+            System.out.println(comments);
       return list;
     } catch (GeneralSecurityException | IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);

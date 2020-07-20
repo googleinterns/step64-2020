@@ -36,6 +36,7 @@ import com.google.cloud.language.v1.Token;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 /**
  * Uses the Natural Language API to perform entity, sentiment and syntax
@@ -43,11 +44,11 @@ import java.util.Map;
  */
 public class Analyze {
   /** Identifies entities in a given string. */
-  public void analyzeEntitiesText(String text) throws IOException {
+  public List<String> analyzeEntitiesText(String text) throws IOException {
     // Instantiate the Language client com.google.cloud.language.v1.LanguageServiceClient
     try (LanguageServiceClient language = LanguageServiceClient.create()) {
       Document doc = Document.newBuilder().setContent(text).setType(Type.PLAIN_TEXT).build();
-      analyzeEntities(doc, language);
+      return analyzeEntities(doc, language);
     }
   }
 
@@ -62,17 +63,19 @@ public class Analyze {
     }
   }
 
-  private void analyzeEntities(Document doc, LanguageServiceClient language) throws IOException {
+  private List<String> analyzeEntities(Document doc, LanguageServiceClient language) throws IOException {
     AnalyzeEntitiesRequest request = AnalyzeEntitiesRequest.newBuilder()
                                          .setDocument(doc)
                                          .setEncodingType(EncodingType.UTF16)
                                          .build();
 
     AnalyzeEntitiesResponse response = language.analyzeEntities(request);
+    List<String> entityNames = Collections.emptyList();
 
     // Print the response
     for (Entity entity : response.getEntitiesList()) {
       System.out.printf("Entity: %s\n", entity.getName());
+      entityNames.add(entity.getName());
       System.out.printf("Salience: %.3f\n", entity.getSalience());
       System.out.println("Metadata: ");
       for (Map.Entry<String, String> entry : entity.getMetadataMap().entrySet()) {
@@ -84,6 +87,7 @@ public class Analyze {
         System.out.printf("Type: %s\n\n", mention.getType());
       }
     }
+    return entityNames;
   }
 
   /** Identifies the sentiment in a given string. */

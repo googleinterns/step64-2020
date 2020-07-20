@@ -59,6 +59,7 @@ public class DataServlet extends HttpServlet {
   private static List<String> threadTitles = new ArrayList<String>();
   private static List<Double> threadSentiments = new ArrayList<Double>();
   private static List<Integer> threadUpvotes = new ArrayList<Integer>();
+  private static List<String> threadSubjects = new ArrayList<String>();
   private static List<String> threadUrls = new ArrayList<String>();
   private final JSONObject threadInfoList = new JSONObject();
   private final Gson gson = new Gson();
@@ -76,7 +77,9 @@ public class DataServlet extends HttpServlet {
       return;
     }
     for (YoutubePost post : newPosts) {
-      threadTitles.add(post.getTitle());
+      // threadTitles.add(post.getTitle());
+      String entity = analyze.analyzeEntitiesText(post.getTitle()).get(0);
+      threadTitles.add(entity);
       threadSentiments.add(analyze.getSentimentScore(post.getContent()));
       threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
       threadUrls.add(post.getUrl());

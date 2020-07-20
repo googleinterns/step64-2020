@@ -13,15 +13,16 @@
 // limitations under the License.
 var currentPage = 1;
 var postperPage = 10;
-var order = "no-order";
+var numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line
-    order = document.getElementById('Sort').value;
-  const url = '/data?=currentPage'+ currentPage + '&=postperPage'+ postperPage+'&order'+order;
+  const url = '/videos-sentiment?currentPage='+ currentPage + '&postPerPage='+ postperPage;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
-    createpageOptions(threadInfoList.numOfPages[0]);
+    numberOfPages= threadInfoList.numOfPages;
+    createPageOptions();
+    check();
     threadList.appendChild(loadList(threadInfoList));
   });
 }
@@ -77,29 +78,49 @@ function linkListElement(url) {
   return liElement;
 }
 
-/** TODO: Create Pagination for Dashboard*/
-
 /** Retrieves the previous page */
 function previous() {  // eslint-disable-line
-  /**   TODO */
+  try{
+    if (currentPage == 1) throw 'This is the first page'
+    currentPage--;
+    addThreads();
+  } catch (err) {
+    console.log(err.message);
+  }
 }
 
 /** Retrieves the next page */
 function next() {  // eslint-disable-line
-  /**   TODO */
+  try{
+    if (currentPage == numberOfPages) throw 'This is the last Page'
+    currentPage++;
+    addThreads();
+  } catch (err) {
+    console.log(err.message);
+  }
 }
 
 /** Retrieves the specificied page number */
 function numberPage(pageNumber) {  // eslint-disable-line
-  /**   TODO */
+  currentPage = pageNumber;
+  addThreads();
+}
+function check() {
+    document.getElementById("next").disabled = currentPage >= numberOfPages ? true : false;
+    document.getElementById("previous").disabled = currentPage == 1 ? true : false;
 }
 
-function createpageOptions(numberOfPages){
-  const select = document.getElementById('pageNumber');
-  for (let i = 1; i<= numberOfPages; i++){
+function createPageOptions() { 
+    const select = document.getElementById('pageNumber');
+    select.innerHTML = '';
+    for(let i =1; i<= numberOfPages; i++){
+      console.log(i);
       const pageOption = document.createElement('option');
-      pageOption.innerText = i;
+      pageOption.appendChild(document.createTextNode(i));
       pageOption.value = i;
       select.appendChild(pageOption);
-  }
+    }
+    const amountOfPages = document.getElementById('amountOfPages');
+    amountOfPages.innerHTML = '';
+    amountOfPages.appendChild(' of '+ currentPage);
 }

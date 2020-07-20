@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps;
+package com.google.sps.servlets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -50,7 +50,7 @@ import org.json.simple.JSONObject;
 /**
  * Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video
  */
-@WebServlet("/data")
+@WebServlet("/videos-sentiment")
 public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";
@@ -68,45 +68,59 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    /*try {
-      List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
+    /*List<YoutubePost> newPosts;
+    try {
+      newPosts = YoutubeApi.getYoutubePost();
     } catch (YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
       response.sendError(500, "An error occurred while fetching Youtube Posts");
       return;
     }*/
     int currentPage = convertToInt(request.getParameter("currentPage"));
-    int postperPage = convertToInt(request.getParameter("postPerPage"));
-    String order = request.getParameter("order");
+    int postPerPage = convertToInt(request.getParameter("postPerPage"));
 
     threadTitles.clear();
     threadSentiments.clear();
     threadUpvotes.clear();
     threadUrls.clear();
-    
-    threadInfoList.put("numOfPages", calculateNumOfPages(threadTitle.size()));
+
+    for(int i = 0; i< 1; i++){
+        threadTitles.add("Word"+i);
+        threadUpvotes.add(i);
+        threadSentiments.add(i*2.3);
+        threadUrls.add("https://beginnersbook.com/2013/12/how-to-get-sublist-of-an-arraylist-with-example/");
+    }
+    int numOfPages = (int) Math.ceil(threadTitles.size()/postPerPage);
+    createCurrentPage(currentPage, postPerPage);
+    if (numOfPages == 0){
+        numOfPages++;
+    }
+    threadInfoList.put("numOfPages", numOfPages);
     threadInfoList.put(TITLE, threadTitles);
     threadInfoList.put(SENTIMENT, threadSentiments);
     threadInfoList.put(UPVOTES, threadUpvotes);
     threadInfoList.put(URL, threadUrls);
-
+    /*for (YoutubePost post : newPosts) {
+      threadTitles.add(post.getTitle());
+      threadSentiments.add(analyze.getSentimentScore(post.getContent()));
+      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
+      threadUrls.add(post.getUrl()); 
+    }*/
     response.setContentType("application/json;");
     response.getWriter().print(threadInfoList);
+  }
+  private void createCurrentPage(int currentPage, int postPerPage){
+    int start = (currentPage-1) * postPerPage;
+    int end = currentPage * postPerPage;
+    if (threadTitles.size() < end){
+        end = threadTitles.size();
+    }
+    threadTitles = threadTitles.subList(start,end);
+    threadSentiments = threadSentiments.subList(start,end);
+    threadUpvotes = threadUpvotes.subList(start, end);
+    threadUrls = threadUrls.subList(start, end);
+  }
 
-    /*// get sentiment properties from text
-    Sentiment sentimentFromText = analyze.analyzeSentimentText("youtube comment text");
-    double sentimentScoreText = sentimentFromText.getScore();
-    double magnitudeScoreText = sentimentFromText.getMagnitude();
-    // print the main subjects in the text
-    analyze.analyzeEntitiesText("youtube comment text");
-    // print the syntax in the text
-    analyze.analyzeSyntaxText("youtube comment text");
-    // print categories in text
-    analyze.entitySentimentText("youtube comment text");*/
-  }
-  private int calculateNumOfPages(int postPerPage, int numOfPages) {
-      return (int) Math.ceil(numOfPages/postPerPage);
-  }
   private int convertToInt(String beingconverted) {
     int convertee;
     try {

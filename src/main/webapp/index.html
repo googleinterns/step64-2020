@@ -8,23 +8,24 @@
   </head>
   <body onload ="addThreads()">
     <div id="content">
-      <h1>Reddit Dashboard</h1>
-      <label for="Sort"id="sortLabel" >Sort </label>
-      <select id="Sort" name="Sort" onchange ="addThreads">
-        <option value="most-Recent">Most Recent</option>
-        <option value="high-Sentiment">Greater Sentiment</option>
-        <option value="low-Sentiment">Lower Sentiment</option>
-        <option value="most-Upvotes">Most Upvotes</option>
-        <option value="least-Upvotes">Least Upvotes</option>
-      </select>
-      
+      <h1>Youtube Comment Dashboard</h1>
+      <div class="sentimentKey">
+        Sentiment Key
+        <div class="sentimentText">
+          <ul>
+            <li>Range = [-1, 1]</li>
+            <li>-1 = Very Bad</li>
+            <li>1 = Very Good</li>
+            <li>0 = Neutral</li>
+          </ul>
+        </div>
+      </div>
       <div id="thread-container"></div>
-      <button type="button" id= "previous" onclick="previousPage()" value="Previous">Previous</button>
+      <button type="button" id= "previous" onclick="previous()" value="Previous">Previous</button>
       <span>Page</span>
-      <select name ="pageNumber" id="pageNumer" onchange="numberPage(value)"></select> 
+      <select name ="pageNumber" id="pageNumber" onchange="numberPage(value)"></select> 
       <span id ="amountOfPages"> </span>
-      <button type="button" id="next" onclick="nextPage()" value="Next">Next</button>
-    </div>
+      <button type="button" id="next" onclick="next()" value="Next">Next</button>
     </div>
   </body>
 </html>

@@ -119,11 +119,8 @@ public class DataServlet extends HttpServlet {
     try {
       convertee = Integer.parseInt(beingconverted);
     } catch (NumberFormatException e) {
-      System.err.println("Could not convert to int: " + beingconverted);
-      return 1;
-    } catch (IllegalArgumentException e) {
-      System.err.println("The argument passed is not acceptable: " + beingconverted);
-      return 1;
+      System.err.println("Error: Argument is returning: " + beingconverted);
+      throw new IllegalArgumentException("Could not convert to int", e);
     }
     return convertee;
   }

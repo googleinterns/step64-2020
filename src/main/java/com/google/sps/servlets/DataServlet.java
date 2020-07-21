@@ -58,17 +58,19 @@ public class DataServlet extends HttpServlet {
   private static final String LIKES = "likes";
   private static final String URL = "url";
   private static final String NUMOFPAGES = "numOfPages";
-  private List<String> threadTitles = new ArrayList<String>();
-  private List<Double> threadSentiments = new ArrayList<Double>();
-  private List<Integer> threadLikes = new ArrayList<Integer>();
-  private List<String> threadUrls = new ArrayList<String>();
-  private final JSONObject threadInfoList = new JSONObject();
+
+  private final JSONObject threadInfo = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private final Analyze analyze = new Analyze();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<String> threadTitles = new ArrayList<String>();
+    List<Double> threadSentiments = new ArrayList<Double>();
+    List<Integer> threadLikes = new ArrayList<Integer>();
+    List<String> threadUrls = new ArrayList<String>();
+
     List<YoutubePost> newPosts;
     try {
       newPosts = YoutubeApi.getYoutubePost();
@@ -81,10 +83,6 @@ public class DataServlet extends HttpServlet {
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
 
-    threadTitles.clear();
-    threadSentiments.clear();
-    threadLikes.clear();
-    threadUrls.clear();
     for (YoutubePost post : newPosts) {
       threadTitles.add(post.getTitle());
       threadSentiments.add(analyze.getSentimentScore(post.getContent()));
@@ -92,39 +90,39 @@ public class DataServlet extends HttpServlet {
       threadUrls.add(post.getUrl());
     }
 
-    int numOfPages = (int) Math.ceil(threadTitles.size() / postPerPage);
-    createCurrentPage(currentPage, postPerPage);
-    if (numOfPages == 0) {
-      numOfPages++;
-    }
-    threadInfoList.put(NUMOFPAGES, numOfPages);
-    threadInfoList.put(TITLE, threadTitles);
-    threadInfoList.put(SENTIMENT, threadSentiments);
-    threadInfoList.put(LIKES, threadLikes);
-    threadInfoList.put(URL, threadUrls);
+    int numOfPages = Math.max(1, ((int) Math.ceil(threadTitles.size() / postPerPage)));
+    createCurrentPage(
+        currentPage, postPerPage, threadTitles, threadSentiments, threadLikes, threadUrls);
+
+    threadInfo.put(NUMOFPAGES, numOfPages);
 
     response.setContentType("application/json;");
-    response.getWriter().print(threadInfoList);
+    response.getWriter().print(threadInfo);
   }
 
-  private void createCurrentPage(int currentPage, int postPerPage) {
+  private void createCurrentPage(int currentPage, int postPerPage, List<String> threadTitles,
+      List<Double> threadSentiments, List<Integer> threadLikes, List<String> threadUrls) {
     int start = (currentPage - 1) * postPerPage;
-    int end = currentPage * postPerPage;
-    if (threadTitles.size() < end) {
-      end = Math.min(threadTitles.size(), end);
-    }
+    int end = Math.min(threadTitles.size(), (currentPage * postPerPage));
     threadTitles = threadTitles.subList(start, end);
     threadSentiments = threadSentiments.subList(start, end);
     threadLikes = threadLikes.subList(start, end);
     threadUrls = threadUrls.subList(start, end);
+    threadInfo.put(TITLE, threadTitles);
+    threadInfo.put(SENTIMENT, threadSentiments);
+    threadInfo.put(LIKES, threadLikes);
+    threadInfo.put(URL, threadUrls);
   }
 
   private int convertToInt(String beingconverted) {
-    int convertee;
+    int convertee = 0;
     try {
       convertee = Integer.parseInt(beingconverted);
     } catch (NumberFormatException e) {
       System.err.println("Could not convert to int: " + beingconverted);
+      return 1;
+    } catch (IllegalArgumentException e) {
+      System.err.println("The argument passed is not acceptable: " + beingconverted);
       return 1;
     }
     return convertee;

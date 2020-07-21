@@ -14,7 +14,7 @@ public class AnalyzedVideo {
           "Maybe this could be structured a different way");
   private final static ImmutableList<Double> sentimentList =
       ImmutableList.of(-.3, -.5, -.1, -.2, -.5);
-  private final static ImmutableList<Integer> upvotesList = ImmutableList.of(30, 50, 10, 5, 12);
+  private final static ImmutableList<Integer> likesList = ImmutableList.of(30, 50, 10, 5, 12);
   private final static ImmutableList<String> urlList =
       ImmutableList.of("http://www.youtube.com", "http://www.reddit.com", "http://www.facebook.com",
           "http://www.yahoo.com", "http://www.amazon.com");
@@ -64,7 +64,7 @@ public class AnalyzedVideo {
   }
 
   public static int getRandomUpvote() {
-    return upvotesList.get(rand.nextInt(4));
+    return likesList.get(rand.nextInt(4));
   }
 
   public static String getRandomUrl() {

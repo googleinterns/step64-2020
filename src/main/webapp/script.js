@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 let currentPage = 1;
-const postperPage = 10;
+const postPerPage = 10; // eslint-disable-line
 let numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line
-  const url = '/videos-sentiment?currentPage=' + currentPage +
-      '&postPerPage=' + postperPage;
+  const url =
+      '/videos-sentiment?currentPage={currentPage}&postPerPage={postPerPage}';
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
     numberOfPages = threadInfoList.numOfPages;
     createPageOptions();
-    check();
+    update();
     threadList.appendChild(loadList(threadInfoList));
   });
 }
@@ -80,24 +80,14 @@ function linkListElement(url) {
 
 /** Retrieves the previous page */
 function previous() {  // eslint-disable-line
-  try {
-    if (currentPage == 1) throw new Error('This is the first page');
-    currentPage--;
-    addThreads();
-  } catch (err) {
-    console.log(err.message);
-  }
+  currentPage--;
+  addThreads();
 }
 
 /** Retrieves the next page */
 function next() {  // eslint-disable-line
-  try {
-    if (currentPage == numberOfPages) throw new Error('This is the last Page');
-    currentPage++;
-    addThreads();
-  } catch (err) {
-    console.log(err.message);
-  }
+  currentPage++;
+  addThreads();
 }
 
 /** Retrieves the specificied page number */
@@ -106,8 +96,8 @@ function numberPage(pageNumber) {  // eslint-disable-line
   addThreads();
 }
 
-/** Check if previous and next buttons can go onto next or not */
-function check() {
+/** Dis/enables previous and next button */
+function update() {
   document.getElementById('next').disabled =
       currentPage >= numberOfPages ? true : false;
   document.getElementById('previous').disabled =

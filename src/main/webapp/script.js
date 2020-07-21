@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 let currentPage = 1;
-const postPerPage = 10; // eslint-disable-line
+const postPerPage = 10;  // eslint-disable-line
 let numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line

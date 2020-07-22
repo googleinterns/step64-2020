@@ -17,11 +17,11 @@ let numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line
   const url =
-      '/videos-sentiment?currentPage={currentPage}&postPerPage={postPerPage}';
+      '/videos-sentiment?currentPage=${currentPage}&postPerPage=${postPerPage}';
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
-    numberOfPages = threadInfoList.numOfPages;
+    numberOfPages = Math.max(1, Max.ceil(threadInfoList.length/postPerPage));
     createPageOptions();
     update();
     threadList.appendChild(loadList(threadInfoList));
@@ -31,33 +31,33 @@ function addThreads() {  // eslint-disable-line
 function loadList(list) {
   const div = document.createElement('div');
   div.id = 'Dividor';
-  for (let i = 0; i < list.sentiment.length; i++) {
-    const description = createDescription(list, i);
-    const button = createTitleButton(list, i);
+  list.forEach((element) => {
+    const description = createDescription(element);
+    const button = createTitleButton(element);
     div.appendChild(button);
     div.appendChild(description);
-  }
+  });
   return div;
 }
 
-function createDescription(list, index) {
+function createDescription(video) {
   const threadDescription = document.createElement('ul');
   const liDescription = document.createElement('li');
   liDescription.innerText = 'Description';
   liDescription.className = 'description-li';
   threadDescription.appendChild(liDescription);
   threadDescription.appendChild(
-      createLiElement('Sentiment Value: ' + list.sentiment[index]));
-  threadDescription.appendChild(createLiElement('Likes: ' + list.likes[index]));
-  threadDescription.appendChild(linkListElement(list.url[index]));
+      createLiElement('Sentiment Value: ' + video.sentiment));
+  threadDescription.appendChild(createLiElement('Likes: ' + video.like));
+  threadDescription.appendChild(linkListElement(video.url));
   threadDescription.className = 'description';
   threadDescription.id = 'ul' + index;
   return threadDescription;
 }
 
-function createTitleButton(list, index) {
+function createTitleButton(video) {
   const titleButton = document.createElement('button');
-  titleButton.innerText = list.title[index];
+  titleButton.innerText = video.title;
   titleButton.className = 'thread';
   return titleButton;
 }
@@ -76,6 +76,15 @@ function linkListElement(url) {
   aElement.innerText = 'See Youtube Video';
   liElement.appendChild(aElement);
   return liElement;
+}
+
+class AnalyzedVideo {
+  constructor(title, sentiment, like, url){
+    this.title = title;
+    this.sentiment = sentiment;
+    this.like = like;
+    this.url = url;
+  }
 }
 
 /** Retrieves the previous page */

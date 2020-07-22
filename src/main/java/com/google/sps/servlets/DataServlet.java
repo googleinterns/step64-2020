@@ -82,25 +82,25 @@ public class DataServlet extends HttpServlet {
     for (YoutubePost post : newPosts) {
       String title = post.getTitle();
       double sentiment = analyze.getSentimentScore(post.getContent());
-      int likes = Math.random()*100;
+      int likes = (int) Math.random()*100;
       String url = post.getUrl();
       AnalyzedVideo tempVideo = AnalyzedVideo.create(title, sentiment, likes, url);
       threadInfo.add(tempVideo);
     }
 
-    int numOfPages = Math.max(1, ((int) Math.ceil(threadTitles.size() / postPerPage)));
     threadInfo = createCurrentPage(currentPage, postPerPage, threadInfo);
+    System.out.println(threadInfo);
 
-    
 
     response.setContentType("application/json;");
-    response.getWriter().print(threadInfo);
+    response.getWriter().print(gson.toJson(threadInfo));
   }
 
   private List<AnalyzedVideo> createCurrentPage(int currentPage, int postPerPage, List <AnalyzedVideo> threadInfo) {
     int start = (currentPage - 1) * postPerPage;
-    int end = Math.min(threadTitles.size(), (currentPage * postPerPage));
+    int end = Math.min(threadInfo.size(), (currentPage * postPerPage));
     threadInfo = threadInfo.subList(start, end);
+    return threadInfo;
   }
 
   private int convertToInt(String beingconverted) {

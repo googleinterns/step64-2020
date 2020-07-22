@@ -36,7 +36,8 @@ public class YoutubePost {
   private final List<Long> commentLikesList;
   private static BigInteger likeCount;
 
-  public YoutubePost(String title, String content, String id, List<String> comments, List<Long> commentLikesList, DateTime timeStamp) {
+  public YoutubePost(String title, String content, String id, List<String> comments,
+      List<Long> commentLikesList, DateTime timeStamp) {
     this.title = title;
     this.content = content;
     this.id = id;

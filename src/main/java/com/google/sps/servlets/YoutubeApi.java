@@ -86,12 +86,11 @@ public class YoutubeApi {
       }
       /**Constructor model (Title, Description, Video id, Video comments, video comment likes, Video
        * publish time stamp, Video likes) */
-      YoutubePost newPost = new YoutubePost(video.getSnippet().getTitle(),
-          video.getSnippet().getDescription(), video.getId(), plainComments, commentLikesList,
-          video.getSnippet().getPublishedAt());
+      YoutubePost newPost =
+          new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
+              video.getId(), plainComments, commentLikesList, video.getSnippet().getPublishedAt());
 
       list.add(newPost);
-      System.out.println(list);
       return list;
     } catch (GeneralSecurityException | IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);

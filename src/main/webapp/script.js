@@ -17,11 +17,11 @@ let numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line
   const url =
-      '/videos-sentiment?currentPage=${currentPage}&postPerPage=${postPerPage}';
+      `/videos-sentiment?currentPage=${currentPage}&postPerPage=${postPerPage}`;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
-    numberOfPages = Math.max(1, Max.ceil(threadInfoList.length/postPerPage));
+    numberOfPages = Math.max(1, Math.ceil(threadInfoList.length / postPerPage));
     createPageOptions();
     update();
     threadList.appendChild(loadList(threadInfoList));
@@ -51,7 +51,6 @@ function createDescription(video) {
   threadDescription.appendChild(createLiElement('Likes: ' + video.like));
   threadDescription.appendChild(linkListElement(video.url));
   threadDescription.className = 'description';
-  threadDescription.id = 'ul' + index;
   return threadDescription;
 }
 
@@ -78,8 +77,8 @@ function linkListElement(url) {
   return liElement;
 }
 
-class AnalyzedVideo {
-  constructor(title, sentiment, like, url){
+class AnalyzedVideo { // eslint-disable-line
+  constructor(title, sentiment, like, url) {
     this.title = title;
     this.sentiment = sentiment;
     this.like = like;

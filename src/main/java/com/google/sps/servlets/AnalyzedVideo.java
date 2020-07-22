@@ -1,78 +1,18 @@
 package com.google.sps.servlets;
 
-import com.google.cloud.language.v1.Sentiment;
-import com.google.common.collect.ImmutableList;
+
 import java.io.IOException;
-import java.util.Random;
+import com.google.auto.value.AutoValue;
 
 /** Represents a Video that's been analyzed by the NLP API */
-public class AnalyzedVideo {
-  private final static Analyze analyze = new Analyze();
-  public final static ImmutableList<String> titlesList =
-      ImmutableList.of("Where is this supposed to go?", "This program needs to work better",
-          "The wifi needs to be more consistent", "This could be better",
-          "Maybe this could be structured a different way");
-  private final static ImmutableList<Double> sentimentList =
-      ImmutableList.of(-.3, -.5, -.1, -.2, -.5);
-  private final static ImmutableList<Integer> likesList = ImmutableList.of(30, 50, 10, 5, 12);
-  private final static ImmutableList<String> urlList =
-      ImmutableList.of("http://www.youtube.com", "http://www.reddit.com", "http://www.facebook.com",
-          "http://www.yahoo.com", "http://www.amazon.com");
-  private final static Random rand = new Random();
-  private final String threadTitle;
-  private final double sentiment;
-  private final int upvotes;
-  private final int timestamp;
-  private final String threadUrl;
+@AutoValue
+abstract class AnalyzedVideo {
+    abstract String title();
+    abstract double sentiment();
+    abstract int likes();
+    abstract  String url();
 
-  private AnalyzedVideo(
-      String threadTitle, double sentiment, int upvotes, int timestamp, String threadUrl) {
-    this.threadTitle = threadTitle;
-    this.sentiment = sentiment;
-    this.upvotes = upvotes;
-    this.timestamp = timestamp;
-    this.threadUrl = threadUrl;
-  }
-
-  public static AnalyzedVideo createThread(
-      String threadTitle, double sentiment, int upvotes, int timestamp, String threadUrl) {
-    return new AnalyzedVideo(threadTitle, sentiment, upvotes, timestamp, threadUrl);
-  }
-
-  public String title() {
-    return threadTitle;
-  }
-
-  public double sentiment() {
-    return sentiment;
-  }
-
-  public int upvote() {
-    return upvotes;
-  }
-
-  public int timeStamp() {
-    return timestamp;
-  }
-
-  public String url() {
-    return threadUrl;
-  }
-
-  public static String getRandomTitle() {
-    return titlesList.get(rand.nextInt(4));
-  }
-
-  public static int getRandomUpvote() {
-    return likesList.get(rand.nextInt(4));
-  }
-
-  public static String getRandomUrl() {
-    return urlList.get(rand.nextInt(4));
-  }
-
-  public String toString() {
-    return String.format("thread: %s, sentiment: %d, upvote: %d, timestamp: %d, url: %s",
-        threadTitle, sentiment, upvotes, timestamp, threadUrl);
-  }
+    public static AnalyzedVideo create(String title, double sentiment, int likes, String url){
+        return new AutoValue_AnalyzedVideo(title, sentiment, likes, url);
+    }
 }

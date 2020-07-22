@@ -34,6 +34,7 @@ import com.google.sps.servlets.YoutubeApiException;
 import com.google.sps.servlets.YoutubePost;
 import java.io.Console;
 import java.io.IOException;
+import java.lang.Math;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,19 +55,22 @@ public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";
   private static final String SENTIMENT = "sentiment";
-  private static final String UPVOTES = "upvotes";
+  private static final String LIKES = "likes";
   private static final String URL = "url";
-  private static List<String> threadTitles = new ArrayList<String>();
-  private static List<Double> threadSentiments = new ArrayList<Double>();
-  private static List<Integer> threadUpvotes = new ArrayList<Integer>();
-  private static List<String> threadUrls = new ArrayList<String>();
-  private final JSONObject threadInfoList = new JSONObject();
+  private static final String NUMOFPAGES = "numOfPages";
+
+  private final JSONObject threadInfo = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private final Analyze analyze = new Analyze();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<String> threadTitles = new ArrayList<String>();
+    List<Double> threadSentiments = new ArrayList<Double>();
+    List<Integer> threadLikes = new ArrayList<Integer>();
+    List<String> threadUrls = new ArrayList<String>();
+
     List<YoutubePost> newPosts;
     try {
       newPosts = YoutubeApi.getYoutubePost();
@@ -75,18 +79,49 @@ public class DataServlet extends HttpServlet {
       response.sendError(500, "An error occurred while fetching Youtube Posts");
       return;
     }
+
+    int currentPage = convertToInt(request.getParameter("currentPage"));
+    int postPerPage = convertToInt(request.getParameter("postPerPage"));
+
     for (YoutubePost post : newPosts) {
       threadTitles.add(post.getTitle());
       threadSentiments.add(analyze.getSentimentScore(post.getContent()));
-      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
+      threadLikes.add(AnalyzedVideo.getRandomUpvote());
       threadUrls.add(post.getUrl());
-
-      threadInfoList.put(TITLE, threadTitles);
-      threadInfoList.put(SENTIMENT, threadSentiments);
-      threadInfoList.put(UPVOTES, threadUpvotes);
-      threadInfoList.put(URL, threadUrls);
     }
+
+    int numOfPages = Math.max(1, ((int) Math.ceil(threadTitles.size() / postPerPage)));
+    createCurrentPage(
+        currentPage, postPerPage, threadTitles, threadSentiments, threadLikes, threadUrls);
+
+    threadInfo.put(NUMOFPAGES, numOfPages);
+
     response.setContentType("application/json;");
-    response.getWriter().print(threadInfoList);
+    response.getWriter().print(threadInfo);
+  }
+
+  private void createCurrentPage(int currentPage, int postPerPage, List<String> threadTitles,
+      List<Double> threadSentiments, List<Integer> threadLikes, List<String> threadUrls) {
+    int start = (currentPage - 1) * postPerPage;
+    int end = Math.min(threadTitles.size(), (currentPage * postPerPage));
+    threadTitles = threadTitles.subList(start, end);
+    threadSentiments = threadSentiments.subList(start, end);
+    threadLikes = threadLikes.subList(start, end);
+    threadUrls = threadUrls.subList(start, end);
+    threadInfo.put(TITLE, threadTitles);
+    threadInfo.put(SENTIMENT, threadSentiments);
+    threadInfo.put(LIKES, threadLikes);
+    threadInfo.put(URL, threadUrls);
+  }
+
+  private int convertToInt(String beingconverted) {
+    int convertee = 0;
+    try {
+      convertee = Integer.parseInt(beingconverted);
+    } catch (NumberFormatException e) {
+      System.err.println("Error: Argument is returning: " + beingconverted);
+      throw new IllegalArgumentException("Could not convert to int", e);
+    }
+    return convertee;
   }
 }

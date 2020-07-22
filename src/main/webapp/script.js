@@ -77,7 +77,7 @@ function linkListElement(url) {
   return liElement;
 }
 
-class AnalyzedVideo { // eslint-disable-line
+class AnalyzedVideo {  // eslint-disable-line
   constructor(title, sentiment, like, url) {
     this.title = title;
     this.sentiment = sentiment;

@@ -14,50 +14,81 @@
 
 package com.google.sps.servlets;
 
-import com.google.sps.servlets.YoutubeApiException;
-import com.google.api.services.youtube.model.CommentListResponse;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube.CommentThreads;
-import com.google.sps.servlets.YoutubeApi;
+import com.google.api.services.youtube.model.CommentListResponse;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.sps.servlets.YoutubeApi;
+import com.google.sps.servlets.YoutubeApiException;
+import java.math.BigInteger;
 import java.util.List;
-
-
 
 /** Data model for a singular Youtube post that will be added into a list of posts. */
 public class YoutubePost {
   private final String title;
   private final String content;
-  private static String url;
+  private final String url;
   private final String id;
-  private static String timeStamp;
-  
+  private static DateTime timeStamp;
+  private final List<String> comments;
+  private final List<Long> commentLikesList;
+  private static BigInteger likeCount;
 
-  public YoutubePost(String title, String content, String id) {
+  public YoutubePost(String title, String content, String id, List<String> comments, List<Long> commentLikesList, DateTime timeStamp) {
     this.title = title;
     this.content = content;
     this.id = id;
-    this.url = getUrl(id);
-    this.comments = getComments();
+    this.url = "https://www.youtube.com/watch?v=" + id;
+    this.comments = comments;
+    this.commentLikesList = commentLikesList;
+    this.timeStamp = timeStamp;
+    this.likeCount = likeCount;
+  }
+
+  public BigInteger getLikes() {
+    return this.likeCount;
+  }
+
+  public List<String> getComments() {
+    return this.comments;
+  }
+
+  public List<Long> getCommentLikes() {
+    return this.commentLikesList;
+  }
+
+  public DateTime getTimeStamp() {
+    return this.timeStamp;
+  }
+
+  public String getUrl(String id) {
+    return this.url;
+  }
+
+  public String getUrl() {
+    return this.url;
+  }
+
+  public String getID() {
+    return this.id;
   }
 
   public String getContent() {
-      return content;
+    return this.content;
   }
 
-
-
-  public static String getUrl(String id) {
-    return "https://www.youtube.com/watch?v=" + id;
+  public String getTitle() {
+    return this.title;
   }
 
   @Override
   public String toString() {
-    String post = ("title: " + title + "\n"
-        + "Description: " + content + "\n"
-        + "Id: " + id + "\n"
-        + "Url: " + url);
+    String post = ("title: " + this.title + "\n"
+        + "Description: " + this.content + "\n"
+        + "Id: " + this.id + "\n"
+        + "Url: " + this.url + "\nComments: " + this.comments + this.commentLikesList);
     return post;
   }
 }

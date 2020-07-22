@@ -14,42 +14,41 @@
  * limitations under the License.
  */
 
-package com.google.sps;
+package com.google.sps.servlets;
 
 import static com.google.common.truth.Truth.assertThat;
+
 import com.google.cloud.language.v1.PartOfSpeech.Tag;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.cloud.language.v1.Token;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import java.io.IOException;
-import org.junit.Ignore;
 
 @RunWith(JUnit4.class)
-@Ignore // Sentiment API not working due to credential issues 
+@Ignore // Sentiment API not working due to credential issues
 public class AnalyzeTest {
-
   private ByteArrayOutputStream bout;
   private PrintStream out;
   private Analyze analyze;
 
   @Before
   public void setUp() {
-   analyze = new Analyze();
+    analyze = new Analyze();
   }
 
   @Test
   public void analyzeCategoriesInTextReturnsExpectedResult() throws IOException {
-    analyze.classifyText(
-        "Android is a mobile operating system developed by Google, "
-            + "based on the Linux kernel and designed primarily for touchscreen "
-            + "mobile devices such as smartphones and tablets.");
+    analyze.classifyText("Android is a mobile operating system developed by Google, "
+        + "based on the Linux kernel and designed primarily for touchscreen "
+        + "mobile devices such as smartphones and tablets.");
     String got = bout.toString();
     assertThat(got).contains("Computers & Electronics");
   }
@@ -58,18 +57,17 @@ public class AnalyzeTest {
   public void analyzeEntities_withEntities_returnsLarryPage() throws IOException {
     analyze.analyzeEntitiesText(
         "Larry Page, Google's co-founder, once described the 'perfect search engine' as"
-            + " something that 'understands exactly what you mean and gives you back exactly what"
-            + " you want.' Since he spoke those words Google has grown to offer products beyond"
-            + " search, but the spirit of what he said remains.");
+        + " something that 'understands exactly what you mean and gives you back exactly what"
+        + " you want.' Since he spoke those words Google has grown to offer products beyond"
+        + " search, but the spirit of what he said remains.");
     String got = bout.toString();
     assertThat(got).contains("Larry Page");
   }
 
   @Test
   public void analyzeSentimentText_returnPositive() throws IOException {
-    Sentiment sentiment =
-        analyze.analyzeSentimentText(
-            "Tom Cruise is one of the finest actors in hollywood and a great star!");
+    Sentiment sentiment = analyze.analyzeSentimentText(
+        "Tom Cruise is one of the finest actors in hollywood and a great star!");
     assertThat(sentiment.getMagnitude()).isGreaterThan(0.0F);
     assertThat(sentiment.getScore()).isGreaterThan(0.0F);
   }
@@ -81,20 +79,20 @@ public class AnalyzeTest {
     assertThat(sentiment.getMagnitude()).isGreaterThan(0.0F);
     assertThat(sentiment.getScore()).isLessThan(0.0F);
   }
-  
+
   @Test
   public void analyzeSentimentScore_returnNegative() throws IOException {
     float sentimentScore =
-        analyze.analyzeSentimentText("That was the worst performance I've seen in a while.").getScore();
+        analyze.analyzeSentimentText("That was the worst performance I've seen in a while.")
+            .getScore();
     assertThat(sentimentScore).isLessThan(0.0F);
   }
 
   @Test
   public void analyzeEntitySentimentTextReturnsExpectedResult() throws IOException {
-    analyze.entitySentimentText(
-        "Oranges, grapes, and apples can be "
-            + "found in the cafeterias located in Mountain View, Seattle, and London.");
+    analyze.entitySentimentText("Oranges, grapes, and apples can be "
+        + "found in the cafeterias located in Mountain View, Seattle, and London.");
     String got = bout.toString();
     assertThat(got).contains("Seattle");
   }
- }
+}

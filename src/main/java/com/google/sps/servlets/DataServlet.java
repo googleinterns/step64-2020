@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps;
+package com.google.sps.servlets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -44,13 +44,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.http.HTTPException;
 import org.json.simple.JSONObject;
 
 /**
  * Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video
  */
-@WebServlet("/data")
+@WebServlet("/videos-sentiment")
 public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";
@@ -68,39 +67,26 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<YoutubePost> newPosts;
     try {
-      List<YoutubePost> newPost = YoutubeApi.getYoutubePost();
+      newPosts = YoutubeApi.getYoutubePost();
     } catch (YoutubeApiException e) {
       System.out.println("Error: Youtube api returning exception" + e);
       response.sendError(500, "An error occurred while fetching Youtube Posts");
       return;
     }
-    if (threadTitles.size() <= 0) {
-      for (int i = 0; i < 5; i++) {
-        threadTitles.add(AnalyzedVideo.getRandomTitle());
-        threadSentiments.add(AnalyzedVideo.getRandomSentiment());
-        threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-        threadUrls.add(AnalyzedVideo.getRandomUrl());
-      }
+    for (YoutubePost post : newPosts) {
+      threadTitles.add(post.getTitle());
+      threadSentiments.add(analyze.getSentimentScore(post.getContent()));
+      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
+      threadUrls.add(post.getUrl());
+
+      threadInfoList.put(TITLE, threadTitles);
+      threadInfoList.put(SENTIMENT, threadSentiments);
+      threadInfoList.put(UPVOTES, threadUpvotes);
+      threadInfoList.put(URL, threadUrls);
     }
-
-    threadInfoList.put(TITLE, threadTitles);
-    threadInfoList.put(SENTIMENT, threadSentiments);
-    threadInfoList.put(UPVOTES, threadUpvotes);
-    threadInfoList.put(URL, threadUrls);
-
     response.setContentType("application/json;");
     response.getWriter().print(threadInfoList);
-
-    // get sentiment properties from text
-    Sentiment sentimentFromText = analyze.analyzeSentimentText("youtube comment text");
-    double sentimentScoreText = sentimentFromText.getScore();
-    double magnitudeScoreText = sentimentFromText.getMagnitude();
-    // print the main subjects in the text
-    analyze.analyzeEntitiesText("youtube comment text");
-    // print the syntax in the text
-    analyze.analyzeSyntaxText("youtube comment text");
-    // print categories in text
-    analyze.entitySentimentText("youtube comment text");
   }
 }

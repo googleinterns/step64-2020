@@ -17,6 +17,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.sps.servlets.YoutubeApiException;
 import java.io.IOException;
+import java.lang.System;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class YoutubeApi {
 
   public static List<YoutubePost> getYoutubePost() throws YoutubeApiException {
     List<YoutubePost> list = new ArrayList();
+    List<CommentData> commentList = new ArrayList();
     String id = "Ks-_Mh1QhMc";
     try {
       VideoListResponse response =
@@ -69,28 +71,17 @@ public class YoutubeApi {
                                                 .setTextFormat("plainText");
       CommentThreadListResponse commentsResponse =
           request.setKey(DEVELOPER_KEY).setMaxResults(15L).execute();
-      List<String> plainComments = new ArrayList<String>();
-      List<Long> commentLikesList = new ArrayList<Long>();
-      Long commentLikes = 0L;
-      if (commentsResponse == null) {
-        System.out.println("No comments");
-      } else {
-        for (CommentThread commentThread : commentsResponse.getItems()) {
-          CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
-          String value = snippet.getTextDisplay();
-          commentLikes = snippet.getLikeCount();
-          commentLikesList.add(commentLikes);
-          plainComments.add(value);
-          System.out.println("Comment: " + value + "\n Likes: " + commentLikes);
-        }
+      for (CommentThread commentThread : commentsResponse.getItems()) {
+        CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
+        commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
       }
       /**Constructor model (Title, Description, Video id, Video comments, video comment likes, Video
        * publish time stamp, Video likes) */
       YoutubePost newPost =
           new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
-              video.getId(), plainComments, commentLikesList, video.getSnippet().getPublishedAt());
-
+              video.getId(), video.getSnippet().getPublishedAt(), commentList);
       list.add(newPost);
+      System.out.println(newPost);
       return list;
     } catch (GeneralSecurityException | IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);

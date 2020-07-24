@@ -38,7 +38,6 @@ public class YoutubeApi {
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final Object SERVICE_LOCK = new Object();
   private static YouTube youtubeService;
-  private static String timeStamp;
 
   private static YouTube getService() throws GeneralSecurityException, IOException {
     if (youtubeService == null) {
@@ -62,8 +61,8 @@ public class YoutubeApi {
       VideoListResponse response =
           getService().videos().list("snippet").setKey(DEVELOPER_KEY).setId(id).execute();
       Video video = response.getItems().get(0);
-      /**Retrieving comments before creating new post */
 
+      // Retrieving comments before creating new post
       YouTube.CommentThreads.List request = getService()
                                                 .commentThreads()
                                                 .list("snippet")
@@ -75,13 +74,12 @@ public class YoutubeApi {
         CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
         commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
       }
-      /**Constructor model (Title, Description, Video id, Video comments, video comment likes, Video
-       * publish time stamp, Video likes) */
+      /*Post model (Title, Description, Video id, Video comments, video comment likes, Video
+      publish time stamp, Video likes)*/
       YoutubePost newPost =
           new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
               video.getId(), video.getSnippet().getPublishedAt(), commentList);
       list.add(newPost);
-      System.out.println(newPost);
       return list;
     } catch (GeneralSecurityException | IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);

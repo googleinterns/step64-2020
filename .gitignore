@@ -2,7 +2,7 @@
 # These are sometimes included but not necessary for this project
 package-lock.json
 node_modules/
-api_key.json
+
 # Ignore generated Maven build files
 target/
 

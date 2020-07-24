@@ -35,7 +35,6 @@ public class YoutubePost {
   private static DateTime timeStamp;
   private static BigInteger likeCount;
   private static List<CommentData> commentList;
-  ImmutableList<CommentData> immutableList;
 
   public YoutubePost(
       String title, String content, String id, DateTime timeStamp, List<CommentData> commentList) {

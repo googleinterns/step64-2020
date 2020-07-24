@@ -66,11 +66,6 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    List<String> threadTitles = new ArrayList<String>();
-    List<Double> threadSentiments = new ArrayList<Double>();
-    List<Integer> threadLikes = new ArrayList<Integer>();
-    List<String> threadUrls = new ArrayList<String>();
-
     List<YoutubePost> newPosts;
     try {
       newPosts = YoutubeApi.getYoutubePost();
@@ -80,38 +75,32 @@ public class DataServlet extends HttpServlet {
       return;
     }
 
+    List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
 
     for (YoutubePost post : newPosts) {
-      threadTitles.add(post.getTitle());
-      threadSentiments.add(analyze.getSentimentScore(post.getContent()));
-      threadLikes.add(AnalyzedVideo.getRandomUpvote());
-      threadUrls.add(post.getUrl());
+      String title = post.getTitle();
+      double sentiment = analyze.getSentimentScore(post.getContent());
+      int likes = (int) Math.random() * 100;
+      String url = post.getUrl();
+      AnalyzedVideo tempVideo = AnalyzedVideo.create(title, sentiment, likes, url);
+      threadInfo.add(tempVideo);
     }
 
-    int numOfPages = Math.max(1, ((int) Math.ceil(threadTitles.size() / postPerPage)));
-    createCurrentPage(
-        currentPage, postPerPage, threadTitles, threadSentiments, threadLikes, threadUrls);
-
-    threadInfo.put(NUMOFPAGES, numOfPages);
+    threadInfo = createCurrentPage(currentPage, postPerPage, threadInfo);
+    System.out.println(threadInfo);
 
     response.setContentType("application/json;");
-    response.getWriter().print(threadInfo);
+    response.getWriter().print(gson.toJson(threadInfo));
   }
 
-  private void createCurrentPage(int currentPage, int postPerPage, List<String> threadTitles,
-      List<Double> threadSentiments, List<Integer> threadLikes, List<String> threadUrls) {
+  private List<AnalyzedVideo> createCurrentPage(
+      int currentPage, int postPerPage, List<AnalyzedVideo> threadInfo) {
     int start = (currentPage - 1) * postPerPage;
-    int end = Math.min(threadTitles.size(), (currentPage * postPerPage));
-    threadTitles = threadTitles.subList(start, end);
-    threadSentiments = threadSentiments.subList(start, end);
-    threadLikes = threadLikes.subList(start, end);
-    threadUrls = threadUrls.subList(start, end);
-    threadInfo.put(TITLE, threadTitles);
-    threadInfo.put(SENTIMENT, threadSentiments);
-    threadInfo.put(LIKES, threadLikes);
-    threadInfo.put(URL, threadUrls);
+    int end = Math.min(threadInfo.size(), (currentPage * postPerPage));
+    threadInfo = threadInfo.subList(start, end);
+    return threadInfo;
   }
 
   private int convertToInt(String beingconverted) {

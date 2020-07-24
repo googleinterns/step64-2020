@@ -34,6 +34,7 @@ import com.google.sps.servlets.YoutubeApiException;
 import com.google.sps.servlets.YoutubePost;
 import java.io.Console;
 import java.io.IOException;
+import java.lang.Math;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,14 +55,11 @@ public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "timestamp";
   private static final String TITLE = "title";
   private static final String SENTIMENT = "sentiment";
-  private static final String UPVOTES = "upvotes";
+  private static final String LIKES = "likes";
   private static final String URL = "url";
-  private static List<String> threadTitles = new ArrayList<String>();
-  private static List<Double> threadSentiments = new ArrayList<Double>();
-  private static List<Integer> threadUpvotes = new ArrayList<Integer>();
-  private static List<String> threadSubjects = new ArrayList<String>();
-  private static List<String> threadUrls = new ArrayList<String>();
-  private final JSONObject threadInfoList = new JSONObject();
+  private static final String NUMOFPAGES = "numOfPages";
+
+  private final JSONObject threadInfo = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private final Analyze analyze = new Analyze();
@@ -76,20 +74,43 @@ public class DataServlet extends HttpServlet {
       response.sendError(500, "An error occurred while fetching Youtube Posts");
       return;
     }
-    for (YoutubePost post : newPosts) {
-      // threadTitles.add(post.getTitle());
-      String entity = analyze.analyzeEntitiesText(post.getTitle()).get(0);
-      threadTitles.add(entity);
-      threadSentiments.add(analyze.getSentimentScore(post.getContent()));
-      threadUpvotes.add(AnalyzedVideo.getRandomUpvote());
-      threadUrls.add(post.getUrl());
 
-      threadInfoList.put(TITLE, threadTitles);
-      threadInfoList.put(SENTIMENT, threadSentiments);
-      threadInfoList.put(UPVOTES, threadUpvotes);
-      threadInfoList.put(URL, threadUrls);
+    List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
+    int currentPage = convertToInt(request.getParameter("currentPage"));
+    int postPerPage = convertToInt(request.getParameter("postPerPage"));
+
+    for (YoutubePost post : newPosts) {
+      String title = post.getTitle();
+      double sentiment = analyze.getSentimentScore(post.getContent());
+      int likes = (int) Math.random() * 100;
+      String url = post.getUrl();
+      AnalyzedVideo tempVideo = AnalyzedVideo.create(title, sentiment, likes, url);
+      threadInfo.add(tempVideo);
     }
+
+    threadInfo = createCurrentPage(currentPage, postPerPage, threadInfo);
+    System.out.println(threadInfo);
+
     response.setContentType("application/json;");
-    response.getWriter().print(threadInfoList);
+    response.getWriter().print(gson.toJson(threadInfo));
+  }
+
+  private List<AnalyzedVideo> createCurrentPage(
+      int currentPage, int postPerPage, List<AnalyzedVideo> threadInfo) {
+    int start = (currentPage - 1) * postPerPage;
+    int end = Math.min(threadInfo.size(), (currentPage * postPerPage));
+    threadInfo = threadInfo.subList(start, end);
+    return threadInfo;
+  }
+
+  private int convertToInt(String beingconverted) {
+    int convertee = 0;
+    try {
+      convertee = Integer.parseInt(beingconverted);
+    } catch (NumberFormatException e) {
+      System.err.println("Error: Argument is returning: " + beingconverted);
+      throw new IllegalArgumentException("Could not convert to int", e);
+    }
+    return convertee;
   }
 }

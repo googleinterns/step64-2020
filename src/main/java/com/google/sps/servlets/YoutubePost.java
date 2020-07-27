@@ -14,7 +14,17 @@
 
 package com.google.sps.servlets;
 
+import com.google.api.client.util.DateTime;
+import com.google.api.services.youtube.YouTube.CommentThreads;
+import com.google.api.services.youtube.model.CommentListResponse;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.common.collect.ImmutableList;
+import com.google.sps.servlets.YoutubeApi;
 import com.google.sps.servlets.YoutubeApiException;
+import java.math.BigInteger;
+import java.util.List;
 
 /** Data model for a singular Youtube post that will be added into a list of posts. */
 public class YoutubePost {
@@ -22,12 +32,36 @@ public class YoutubePost {
   private final String content;
   private final String url;
   private final String id;
+  private static DateTime timeStamp;
+  private static BigInteger likeCount;
+  private static List<CommentData> commentList;
+  ImmutableList<CommentData> immutableList;
 
-  public YoutubePost(String title, String content, String id) {
+  public YoutubePost(
+      String title, String content, String id, DateTime timeStamp, List<CommentData> commentList) {
     this.title = title;
     this.content = content;
     this.id = id;
     this.url = "https://www.youtube.com/watch?v=" + id;
+    this.timeStamp = timeStamp;
+    this.likeCount = likeCount;
+    this.commentList = ImmutableList.copyOf(commentList);
+  }
+
+  public BigInteger getLikes() {
+    return this.likeCount;
+  }
+
+  public String getComments() {
+    return this.commentList.toString();
+  }
+
+  public DateTime getTimeStamp() {
+    return this.timeStamp;
+  }
+
+  public String getUrl(String id) {
+    return this.url;
   }
 
   public String getUrl() {
@@ -51,7 +85,8 @@ public class YoutubePost {
     String post = ("title: " + this.title + "\n"
         + "Description: " + this.content + "\n"
         + "Id: " + this.id + "\n"
-        + "Url: " + this.url);
+        + "Url: " + this.url + "Post date: " + this.timeStamp + "\nComment list"
+        + this.commentList);
     return post;
   }
 }

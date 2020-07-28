@@ -17,7 +17,7 @@ let numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line
   const url =
-      '/videos-sentiment?currentPage={currentPage}&postPerPage={postPerPage}';
+      `/videos-sentiment?currentPage={currentPage}&postPerPage={postPerPage}`;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';

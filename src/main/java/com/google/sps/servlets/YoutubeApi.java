@@ -13,6 +13,8 @@ import com.google.api.services.youtube.model.CommentListResponse;
 import com.google.api.services.youtube.model.CommentSnippet;
 import com.google.api.services.youtube.model.CommentThread;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.sps.servlets.YoutubeApiException;
@@ -28,15 +30,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchResult;
 
 /**The Youtube Api handles getting the request from Youtube by
 getting the service then populates the YoutubePost class with
 the video responses. */
 public class YoutubeApi {
-  //private static final String DEVELOPER_KEY;
   private static final String APPLICATION_NAME = "Capstone Project";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final Object SERVICE_LOCK = new Object();
@@ -58,35 +56,41 @@ public class YoutubeApi {
 
   public static List<YoutubePost> getYoutubePost() throws YoutubeApiException {
     List<YoutubePost> list = new ArrayList();
-    List<CommentData> commentList = new ArrayList();
     String id;
+    String key = (System.getenv("DEVELOPER_KEY"));
     try {
-        YouTube.Search.List searchRequest = getService().search()
-            .list("snippet")
-            .setType("video")
-            .setMaxResults(15L)
-            .setOrder("rating")
-            .setQ("googlefi");
-        SearchListResponse searchResponse = searchRequest.setKey(System.getenv("DEVELOPER_KEY")).execute();
-        for(SearchResult searchResult: searchResponse.getItems()){
-            VideoListResponse response =
-            getService().videos().list("snippet").setKey(System.getenv("DEVELOPER_KEY")).setId(searchResult.getId().getVideoId()).execute();
-            if(response.getItems().size() == 0){
-                continue;
-            }
+      // Returns top posts relevant to GoogleFi and feeds those Ids into video response
+      YouTube.Search.List searchRequest = getService()
+                                              .search()
+                                              .list("snippet")
+                                              .setType("video")
+                                              .setMaxResults(3L)
+                                              .setOrder("relevance")
+                                              .setQ("google fi");
+      SearchListResponse searchResponse = searchRequest.setKey(key).execute();
+      for (SearchResult searchResult : searchResponse.getItems()) {
+        VideoListResponse response = getService()
+                                         .videos()
+                                         .list("snippet")
+                                         .setKey(key)
+                                         .setId(searchResult.getId().getVideoId())
+                                         .execute();
+        if (response.getItems().size() == 0) {
+          continue;
+        }
         Video video = response.getItems().get(0);
-        
         // Retrieving comments before creating new post
         YouTube.CommentThreads.List request = getService()
-                                                    .commentThreads()
-                                                    .list("snippet")
-                                                    .setVideoId(video.getId())
-                                                    .setTextFormat("plainText");
+                                                  .commentThreads()
+                                                  .list("snippet")
+                                                  .setVideoId(video.getId())
+                                                  .setTextFormat("plainText");
         CommentThreadListResponse commentsResponse =
-            request.setKey(System.getenv("DEVELOPER_KEY")).setMaxResults(15L).execute();
+            request.setKey(key).setOrder("relevance").setMaxResults(3L).execute();
+        List<CommentData> commentList = new ArrayList();
         for (CommentThread commentThread : commentsResponse.getItems()) {
-            CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
-            commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
+          CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
+          commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
         }
         /*Post model (Title, Description, Video id, Video comments, video comment likes, Video
         publish time stamp, Video likes)*/
@@ -94,12 +98,11 @@ public class YoutubeApi {
             new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
                 video.getId(), video.getSnippet().getPublishedAt(), commentList);
         list.add(newPost);
-        }
-        return list;
-        } catch (GeneralSecurityException | IOException e) {
-        System.out.println("Error: Youtube api returning exception" + e);
-        throw new YoutubeApiException("Youtube Api could not get service", e);
-        }
+      }
+      return list;
+    } catch (GeneralSecurityException | IOException e) {
+      System.out.println("Error: Youtube api returning exception" + e);
+      throw new YoutubeApiException("Youtube Api could not get service", e);
+    }
   }
 }
-

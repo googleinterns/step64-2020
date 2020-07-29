@@ -34,9 +34,9 @@ import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.cloud.language.v1.Token;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 
 /**
  * Uses the Natural Language API to perform entity, sentiment and syntax
@@ -63,7 +63,8 @@ public class Analyze {
     }
   }
 
-  private List<String> analyzeEntities(Document doc, LanguageServiceClient language) throws IOException {
+  private List<String> analyzeEntities(Document doc, LanguageServiceClient language)
+      throws IOException {
     AnalyzeEntitiesRequest request = AnalyzeEntitiesRequest.newBuilder()
                                          .setDocument(doc)
                                          .setEncodingType(EncodingType.UTF16)
@@ -104,6 +105,18 @@ public class Analyze {
     Sentiment sentimentFromText = analyzeSentimentText(text);
     double score = Math.round(sentimentFromText.getScore() * 100.0) / 100.0;
     return score;
+  }
+
+  /** Returns overall rounded sentiment score from video description and comments */
+  public double getOverallSentimentScore(String contentText, String commentText)
+      throws IOException {
+    Sentiment contentSentiment = analyzeSentimentText(contentText);
+    Sentiment commentSentiment = analyzeSentimentText(commentText);
+    double contentScore = Math.round(contentSentiment.getScore() * 100.0) / 100.0;
+    double commentScore = Math.round(commentSentiment.getScore() * 100.0) / 100.0;
+
+    double overallScore = ((contentScore * 0.3 + commentScore * 0.7) * 100.0) / 100.0;
+    return overallScore;
   }
 
   /** Gets Sentiment from the contents of the GCS hosted file. */

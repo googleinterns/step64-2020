@@ -34,6 +34,7 @@ import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
 import com.google.cloud.language.v1.Token;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -43,11 +44,11 @@ import java.util.Map;
  */
 public class Analyze {
   /** Identifies entities in a given string. */
-  public void analyzeEntitiesText(String text) throws IOException {
+  public List<String> analyzeEntitiesText(String text) throws IOException {
     // Instantiate the Language client com.google.cloud.language.v1.LanguageServiceClient
     try (LanguageServiceClient language = LanguageServiceClient.create()) {
       Document doc = Document.newBuilder().setContent(text).setType(Type.PLAIN_TEXT).build();
-      analyzeEntities(doc, language);
+      return analyzeEntities(doc, language);
     }
   }
 
@@ -62,17 +63,20 @@ public class Analyze {
     }
   }
 
-  private void analyzeEntities(Document doc, LanguageServiceClient language) throws IOException {
+  private List<String> analyzeEntities(Document doc, LanguageServiceClient language)
+      throws IOException {
     AnalyzeEntitiesRequest request = AnalyzeEntitiesRequest.newBuilder()
                                          .setDocument(doc)
                                          .setEncodingType(EncodingType.UTF16)
                                          .build();
 
     AnalyzeEntitiesResponse response = language.analyzeEntities(request);
+    List<String> entityNames = Collections.emptyList();
 
     // Print the response
     for (Entity entity : response.getEntitiesList()) {
       System.out.printf("Entity: %s\n", entity.getName());
+      entityNames.add(entity.getName());
       System.out.printf("Salience: %.3f\n", entity.getSalience());
       System.out.println("Metadata: ");
       for (Map.Entry<String, String> entry : entity.getMetadataMap().entrySet()) {
@@ -84,6 +88,7 @@ public class Analyze {
         System.out.printf("Type: %s\n\n", mention.getType());
       }
     }
+    return entityNames;
   }
 
   /** Identifies the sentiment in a given string. */
@@ -100,6 +105,18 @@ public class Analyze {
     Sentiment sentimentFromText = analyzeSentimentText(text);
     double score = Math.round(sentimentFromText.getScore() * 100.0) / 100.0;
     return score;
+  }
+
+  /** Returns overall rounded sentiment score from video description and comments */
+  public double getOverallSentimentScore(String contentText, String commentText)
+      throws IOException {
+    Sentiment contentSentiment = analyzeSentimentText(contentText);
+    Sentiment commentSentiment = analyzeSentimentText(commentText);
+    double contentScore = Math.round(contentSentiment.getScore() * 100.0) / 100.0;
+    double commentScore = Math.round(commentSentiment.getScore() * 100.0) / 100.0;
+
+    double overallScore = ((contentScore * 0.3 + commentScore * 0.7) * 100.0) / 100.0;
+    return overallScore;
   }
 
   /** Gets Sentiment from the contents of the GCS hosted file. */

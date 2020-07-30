@@ -39,6 +39,9 @@ public class YoutubeApi {
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final Object SERVICE_LOCK = new Object();
   private static YouTube youtubeService;
+  private static final String SNIPPET = "snippet";
+  private static final Long MAX_VIDEO_RESULTS = 5L;
+  private static final Long MAX_COMMENT_RESULTS = 3L;
 
   private static YouTube getService() throws GeneralSecurityException, IOException {
     if (youtubeService == null) {
@@ -57,21 +60,21 @@ public class YoutubeApi {
   public static List<YoutubePost> getYoutubePost() throws YoutubeApiException {
     List<YoutubePost> list = new ArrayList();
     String id;
-    String key = (System.getenv("DEVELOPER_KEY"));
+    String key = System.getenv("DEVELOPER_KEY");
     try {
       // Returns top posts relevant to GoogleFi and feeds those Ids into video response
       YouTube.Search.List searchRequest = getService()
                                               .search()
-                                              .list("snippet")
+                                              .list(SNIPPET)
                                               .setType("video")
-                                              .setMaxResults(3L)
+                                              .setMaxResults(MAX_VIDEO_RESULTS)
                                               .setOrder("relevance")
                                               .setQ("google fi");
       SearchListResponse searchResponse = searchRequest.setKey(key).execute();
       for (SearchResult searchResult : searchResponse.getItems()) {
         VideoListResponse response = getService()
                                          .videos()
-                                         .list("snippet")
+                                         .list(SNIPPET)
                                          .setKey(key)
                                          .setId(searchResult.getId().getVideoId())
                                          .execute();
@@ -82,18 +85,16 @@ public class YoutubeApi {
         // Retrieving comments before creating new post
         YouTube.CommentThreads.List request = getService()
                                                   .commentThreads()
-                                                  .list("snippet")
+                                                  .list(SNIPPET)
                                                   .setVideoId(video.getId())
                                                   .setTextFormat("plainText");
         CommentThreadListResponse commentsResponse =
-            request.setKey(key).setOrder("relevance").setMaxResults(3L).execute();
+            request.setKey(key).setOrder("relevance").setMaxResults(MAX_COMMENT_RESULTS).execute();
         List<CommentData> commentList = new ArrayList();
         for (CommentThread commentThread : commentsResponse.getItems()) {
           CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
           commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
         }
-        /*Post model (Title, Description, Video id, Video comments, video comment likes, Video
-        publish time stamp, Video likes)*/
         YoutubePost newPost =
             new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
                 video.getId(), video.getSnippet().getPublishedAt(), commentList);

@@ -49,7 +49,8 @@ function createDescription(video) {
   threadDescription.appendChild(
       createLiElement('Sentiment Value: ' + video.sentiment));
   threadDescription.appendChild(createLiElement('Likes: ' + video.likes));
-  threadDescription.appendChild(createLiElement('Time & Date: '+ video.timestamp));
+  threadDescription.appendChild(
+      createLiElement('Time & Date: ' + video.timestamp));
   threadDescription.appendChild(linkListElement(video.url));
   threadDescription.className = 'description';
   return threadDescription;

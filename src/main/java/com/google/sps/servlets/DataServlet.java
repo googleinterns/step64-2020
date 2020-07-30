@@ -18,10 +18,8 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.youtube.YouTube;
 import com.google.api.client.util.DateTime;
-import java.util.Date;
-import java.util.Random; 
+import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -38,18 +36,20 @@ import com.google.sps.servlets.YoutubePost;
 import java.io.Console;
 import java.io.IOException;
 import java.lang.Math;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import java.math.BigInteger;
 
 /**
  * Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video
@@ -60,7 +60,7 @@ public class DataServlet extends HttpServlet {
   private static final String LAST_UPDATE = "Last Update";
   private static final String TITLE = "Title";
   private static final String SENTIMENT = "Sentiment";
-  private static final String LIKES ="Likes";
+  private static final String LIKES = "Likes";
   private static final String VIDEO = "Video";
   private static final String ID = "Id";
   private static final String URL = "Url";
@@ -92,29 +92,29 @@ public class DataServlet extends HttpServlet {
       String title = post.getTitle();
       String id = post.getID();
       double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
-      int likes = random.nextInt(300)+1;
+      int likes = random.nextInt(300) + 1;
       String url = post.getUrl();
       long timeStamp = post.getTimeStamp().getValue();
-      
+
       Entity videoEntity = new Entity(VIDEO);
       videoEntity.setProperty(ID, id);
       videoEntity.setProperty(TITLE, title);
       videoEntity.setProperty(LIKES, likes);
       videoEntity.setProperty(SENTIMENT, sentiment);
       videoEntity.setProperty(URL, url);
-      videoEntity.setProperty(TIMESTAMP, timeStamp); 
+      videoEntity.setProperty(TIMESTAMP, timeStamp);
       videoEntity.setProperty(LAST_UPDATE, currentTimestamp);
       datastore.put(videoEntity);
     }
-    
-    for(Entity entity : results.asIterable()){
+
+    for (Entity entity : results.asIterable()) {
       String title = (String) entity.getProperty(TITLE);
       long like = (long) entity.getProperty(LIKES);
       double sentiment = (double) entity.getProperty(SENTIMENT);
       String url = (String) entity.getProperty(URL);
       Date dateTimeStamp = new Date((long) entity.getProperty(TIMESTAMP));
       String timeStamp = dateTimeStamp.toString();
-      AnalyzedVideo currentVideo = AnalyzedVideo.create(title, timeStamp, sentiment, like,url);
+      AnalyzedVideo currentVideo = AnalyzedVideo.create(title, timeStamp, sentiment, like, url);
       threadInfo.add(currentVideo);
     }
 

@@ -112,8 +112,8 @@ public class DataServlet extends HttpServlet {
       long like = (long) entity.getProperty(LIKES);
       double sentiment = (double) entity.getProperty(SENTIMENT);
       String url = (String) entity.getProperty(URL);
-      DateTime dtTimeStamp = new DateTime((long) entity.getProperty(TIMESTAMP));
-      String timeStamp = dtTimeStamp.toString();
+      Date dateTimeStamp = new Date((long) entity.getProperty(TIMESTAMP));
+      String timeStamp = dateTimeStamp.toString();
       AnalyzedVideo currentVideo = AnalyzedVideo.create(title, timeStamp, sentiment, like,url);
       threadInfo.add(currentVideo);
     }

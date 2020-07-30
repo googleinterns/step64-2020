@@ -48,7 +48,9 @@ function createDescription(video) {
   threadDescription.appendChild(liDescription);
   threadDescription.appendChild(
       createLiElement('Sentiment Value: ' + video.sentiment));
-  threadDescription.appendChild(createLiElement('Likes: ' + video.like));
+  threadDescription.appendChild(createLiElement('Likes: ' + video.likes));
+  threadDescription.appendChild(
+      createLiElement('Time & Date: ' + video.timestamp));
   threadDescription.appendChild(linkListElement(video.url));
   threadDescription.className = 'description';
   return threadDescription;
@@ -78,11 +80,12 @@ function linkListElement(url) {
 }
 
 class AnalyzedVideo {  // eslint-disable-line
-  constructor(title, sentiment, like, url) {
+  constructor(title, sentiment, likes, url, timestamp) {
     this.title = title;
     this.sentiment = sentiment;
-    this.like = like;
+    this.likes = likes;
     this.url = url;
+    this.timestamp = timestamp;
   }
 }
 

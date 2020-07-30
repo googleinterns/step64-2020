@@ -1,17 +1,20 @@
 package com.google.sps.servlets;
 
+import com.google.api.client.util.DateTime;
 import com.google.auto.value.AutoValue;
 import java.io.IOException;
 
-/** Represents a Video that's been analyzed by the NLP API */
+/** DataModel for a Youtube Post that's been analyzed by the NLP API */
 @AutoValue
 abstract class AnalyzedVideo {
   abstract String title();
+  abstract String timestamp();
   abstract double sentiment();
-  abstract int likes();
+  abstract long likes();
   abstract String url();
 
-  public static AnalyzedVideo create(String title, double sentiment, int likes, String url) {
-    return new AutoValue_AnalyzedVideo(title, sentiment, likes, url);
+  public static AnalyzedVideo create(
+      String title, String timestamp, double sentiment, long likes, String url) {
+    return new AutoValue_AnalyzedVideo(title, timestamp, sentiment, likes, url);
   }
 }

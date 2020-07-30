@@ -18,6 +18,7 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -35,12 +36,15 @@ import com.google.sps.servlets.YoutubePost;
 import java.io.Console;
 import java.io.IOException;
 import java.lang.Math;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,13 +56,15 @@ import org.json.simple.JSONObject;
  */
 @WebServlet("/videos-sentiment")
 public class DataServlet extends HttpServlet {
-  private static final String TIMESTAMP = "timestamp";
-  private static final String TITLE = "title";
-  private static final String SENTIMENT = "sentiment";
-  private static final String LIKES = "likes";
-  private static final String URL = "url";
-  private static final String NUMOFPAGES = "numOfPages";
-
+  private static final String TIMESTAMP = "Timestamp";
+  private static final String LAST_UPDATE = "lastUpdate";
+  private static final String TITLE = "Title";
+  private static final String SENTIMENT = "Sentiment";
+  private static final String LIKES = "Likes";
+  private static final String VIDEO = "Video";
+  private static final String ID = "Id";
+  private static final String URL = "Url";
+  private static Random random = new Random();
   private final JSONObject threadInfo = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -66,6 +72,9 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Query query = new Query(VIDEO);
+    PreparedQuery results = datastore.prepare(query);
+
     List<YoutubePost> newPosts;
     try {
       newPosts = YoutubeApi.getYoutubePost();
@@ -78,18 +87,38 @@ public class DataServlet extends HttpServlet {
     List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
-
+    long currentTimestamp = System.currentTimeMillis();
     for (YoutubePost post : newPosts) {
       String title = post.getTitle();
+      String id = post.getID();
       double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
-      int likes = (int) Math.random() * 100;
+      int likes = random.nextInt(300) + 1;
       String url = post.getUrl();
-      AnalyzedVideo tempVideo = AnalyzedVideo.create(title, sentiment, likes, url);
-      threadInfo.add(tempVideo);
+      long timeStamp = post.getTimeStamp().getValue();
+
+      Entity videoEntity = new Entity(VIDEO);
+      videoEntity.setProperty(ID, id);
+      videoEntity.setProperty(TITLE, title);
+      videoEntity.setProperty(LIKES, likes);
+      videoEntity.setProperty(SENTIMENT, sentiment);
+      videoEntity.setProperty(URL, url);
+      videoEntity.setProperty(TIMESTAMP, timeStamp);
+      videoEntity.setProperty(LAST_UPDATE, currentTimestamp);
+      datastore.put(videoEntity);
+    }
+
+    for (Entity entity : results.asIterable()) {
+      String title = (String) entity.getProperty(TITLE);
+      long like = (long) entity.getProperty(LIKES);
+      double sentiment = (double) entity.getProperty(SENTIMENT);
+      String url = (String) entity.getProperty(URL);
+      Date dateTimeStamp = new Date((long) entity.getProperty(TIMESTAMP));
+      String timeStamp = dateTimeStamp.toString();
+      AnalyzedVideo currentVideo = AnalyzedVideo.create(title, timeStamp, sentiment, like, url);
+      threadInfo.add(currentVideo);
     }
 
     threadInfo = createCurrentPage(currentPage, postPerPage, threadInfo);
-    System.out.println(threadInfo);
 
     response.setContentType("application/json;");
     response.getWriter().print(gson.toJson(threadInfo));

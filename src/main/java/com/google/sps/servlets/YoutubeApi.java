@@ -81,7 +81,7 @@ public class YoutubeApi {
           continue;
         }
         Video video = response.getItems().get(0);
-        // Retrieving comments before creating new post
+
         YouTube.CommentThreads.List request = getService()
                                                   .commentThreads()
                                                   .list(SNIPPET)

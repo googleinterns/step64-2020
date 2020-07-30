@@ -57,7 +57,7 @@ import org.json.simple.JSONObject;
 @WebServlet("/videos-sentiment")
 public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP = "Timestamp";
-  private static final String LAST_UPDATE = "Last Update";
+  private static final String LAST_UPDATE = "lastUpdate";
   private static final String TITLE = "Title";
   private static final String SENTIMENT = "Sentiment";
   private static final String LIKES = "Likes";

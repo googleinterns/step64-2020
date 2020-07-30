@@ -27,7 +27,6 @@ import java.util.List;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.http.HTTPException;
 
 /**The Youtube Api handles getting the request from Youtube by
 getting the service then populates the YoutubePost class with

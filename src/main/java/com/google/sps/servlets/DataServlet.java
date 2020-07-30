@@ -19,6 +19,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.client.util.DateTime;
+import java.util.Date;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -46,18 +48,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
+import java.math.BigInteger;
 
 /**
  * Servlet responsible for storing Youtube Video and Displaying the details of the Youtube Video
  */
 @WebServlet("/videos-sentiment")
 public class DataServlet extends HttpServlet {
-  private static final String TIMESTAMP = "timestamp";
-  private static final String TITLE = "title";
-  private static final String SENTIMENT = "sentiment";
-  private static final String LIKES = "likes";
-  private static final String URL = "url";
-  private static final String NUMOFPAGES = "numOfPages";
+  private static final String TIMESTAMP = "Timestamp";
+  private static final String LAST_UPDATE = "Last Update";
+  private static final String TITLE = "Titles";
+  private static final String SENTIMENT = "Sentiments";
+  private static final String LIKES ="Likes"
+  private static final String VIDEO = "Video";
+  private static final String ID = "Id";
 
   private final JSONObject threadInfo = new JSONObject();
   private final Gson gson = new Gson();
@@ -66,6 +70,9 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Query query = new Query(VIDEO);
+    PreparedQuery results = datastore.prepare(query);
+
     List<YoutubePost> newPosts;
     try {
       newPosts = YoutubeApi.getYoutubePost();
@@ -78,18 +85,39 @@ public class DataServlet extends HttpServlet {
     List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
-
+    long currentTimestamp = System.currentTimeMillis();
     for (YoutubePost post : newPosts) {
       String title = post.getTitle();
-      double sentiment = analyze.getSentimentScore(post.getContent());
-      int likes = (int) Math.random() * 100;
+      String id = post.getID();
       String url = post.getUrl();
-      AnalyzedVideo tempVideo = AnalyzedVideo.create(title, sentiment, likes, url);
-      threadInfo.add(tempVideo);
+      long timeStamp = post.getTimeStamp().getValue();
+      int likes = (int) Math.random()*100;
+      double sentiment = analyze.getSentimentScore(post.getContent());
+      
+      Entity videoEntity = new Entity(VIDEO);
+      videoEntity.setProperty(ID, id);
+      videoEntity.setProperty(TITLE, title);
+      videoEntity.setProperty(LIKES, likes);
+      videoEntity.setProperty(SENTIMENT, sentiment);
+      videoEntity.setProperty(URL, url);
+      videoEntity.setProperty(SENTIMENT, seniment);
+      videoEntity.setProperty(TIMESTAMP, timeStamp); 
+      videoEntity.setProperty(LAST_UPDATE, currentTimestamp);
+      datastore.put(videoEntity);
+    }
+    
+    for(Entity entity : results.asIterable()){
+      String title = entit
+      int like
+      double sentiment 
+      String url
+      DateTime timeStamp
+      
+      AnalyzedVideo currentVideo =
+      threadInfo.add(currentVideo);
     }
 
     threadInfo = createCurrentPage(currentPage, postPerPage, threadInfo);
-    System.out.println(threadInfo);
 
     response.setContentType("application/json;");
     response.getWriter().print(gson.toJson(threadInfo));

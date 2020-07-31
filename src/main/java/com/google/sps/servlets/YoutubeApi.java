@@ -13,6 +13,8 @@ import com.google.api.services.youtube.model.CommentListResponse;
 import com.google.api.services.youtube.model.CommentSnippet;
 import com.google.api.services.youtube.model.CommentThread;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.sps.servlets.YoutubeApiException;
@@ -32,12 +34,13 @@ import javax.servlet.http.HttpServletResponse;
 getting the service then populates the YoutubePost class with
 the video responses. */
 public class YoutubeApi {
-  private static final String DEVELOPER_KEY = "AIzaSyCSxCO3BeXFt1lYAou94rtlyQhinc470So";
   private static final String APPLICATION_NAME = "Capstone Project";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final Object SERVICE_LOCK = new Object();
   private static YouTube youtubeService;
-  private static String timeStamp;
+  private static final String SNIPPET = "snippet";
+  private static final Long MAX_VIDEO_RESULTS = 5L;
+  private static final Long MAX_COMMENT_RESULTS = 3L;
 
   private static YouTube getService() throws GeneralSecurityException, IOException {
     if (youtubeService == null) {
@@ -55,32 +58,47 @@ public class YoutubeApi {
 
   public static List<YoutubePost> getYoutubePost() throws YoutubeApiException {
     List<YoutubePost> list = new ArrayList();
-    List<CommentData> commentList = new ArrayList();
-    String id = "Ks-_Mh1QhMc";
+    String id;
+    String key = System.getenv("DEVELOPER_KEY");
     try {
-      VideoListResponse response =
-          getService().videos().list("snippet").setKey(DEVELOPER_KEY).setId(id).execute();
-      Video video = response.getItems().get(0);
-      /**Retrieving comments before creating new post */
+      // Returns top posts relevant to GoogleFi and feeds those Ids into video response
+      YouTube.Search.List searchRequest = getService()
+                                              .search()
+                                              .list(SNIPPET)
+                                              .setType("video")
+                                              .setMaxResults(MAX_VIDEO_RESULTS)
+                                              .setOrder("relevance")
+                                              .setQ("google fi");
+      SearchListResponse searchResponse = searchRequest.setKey(key).execute();
+      for (SearchResult searchResult : searchResponse.getItems()) {
+        VideoListResponse response = getService()
+                                         .videos()
+                                         .list(SNIPPET)
+                                         .setKey(key)
+                                         .setId(searchResult.getId().getVideoId())
+                                         .execute();
+        if (response.getItems().size() == 0) {
+          continue;
+        }
+        Video video = response.getItems().get(0);
 
-      YouTube.CommentThreads.List request = getService()
-                                                .commentThreads()
-                                                .list("snippet")
-                                                .setVideoId(video.getId())
-                                                .setTextFormat("plainText");
-      CommentThreadListResponse commentsResponse =
-          request.setKey(DEVELOPER_KEY).setMaxResults(15L).execute();
-      for (CommentThread commentThread : commentsResponse.getItems()) {
-        CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
-        commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
+        YouTube.CommentThreads.List request = getService()
+                                                  .commentThreads()
+                                                  .list(SNIPPET)
+                                                  .setVideoId(video.getId())
+                                                  .setTextFormat("plainText");
+        CommentThreadListResponse commentsResponse =
+            request.setKey(key).setOrder("relevance").setMaxResults(MAX_COMMENT_RESULTS).execute();
+        List<CommentData> commentList = new ArrayList();
+        for (CommentThread commentThread : commentsResponse.getItems()) {
+          CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
+          commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
+        }
+        YoutubePost newPost =
+            new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
+                video.getId(), video.getSnippet().getPublishedAt(), commentList);
+        list.add(newPost);
       }
-      /**Constructor model (Title, Description, Video id, Video comments, video comment likes, Video
-       * publish time stamp, Video likes) */
-      YoutubePost newPost =
-          new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
-              video.getId(), video.getSnippet().getPublishedAt(), commentList);
-      list.add(newPost);
-      System.out.println(newPost);
       return list;
     } catch (GeneralSecurityException | IOException e) {
       System.out.println("Error: Youtube api returning exception" + e);

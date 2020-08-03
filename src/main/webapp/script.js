@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 let currentPage = 1;
-const postPerPage = 10;  // eslint-disable-line
+const postPerPage = 10; 
 let numberOfPages = 1;
 
 function addThreads() {  // eslint-disable-line
@@ -128,4 +128,8 @@ function createPageOptions() {
   const amountOfPages = document.getElementById('amountOfPages');
   amountOfPages.innerHTML = '';
   amountOfPages.appendChild(document.createTextNode(' of ' + currentPage));
+}
+function Sort() {
+  sortType = document.getElementById('Sort').value;
+  addThreads();
 }

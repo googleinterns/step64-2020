@@ -4,6 +4,13 @@
   width: 800px;
   text-align: center;
 }
+#Sort {
+  text-align: center;
+  float: right;
+}
+#page {
+    padding-top: 10px;
+}
 button.thread {
   text-align: left;
   width: 100%;

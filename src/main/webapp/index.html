@@ -20,6 +20,15 @@
           </ul>
         </div>
       </div>
+      
+      <select id="Sort" onchange="Sort()"> 
+        <option value="" disabled selected hidden>Sort By...</option>
+        <option value="most-Recent">Most Recent</option>
+        <option value="high-Sentiment">Highest to Lowest Sentiment</option>
+        <option value="low-Sentiment">Lowest to Highest Sentiment</option>
+        <option value="most-Likes">Most Likes</option>
+        <option value="least-Likes">Least Likes</option>
+      </select>
       <div id="thread-container"></div>
       <button type="button" id="previous" onclick="previous()" value="Previous">Previous</button>
       <span>Page</span>

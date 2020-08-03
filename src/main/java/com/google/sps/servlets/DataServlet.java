@@ -87,9 +87,10 @@ public class DataServlet extends HttpServlet {
       return;
     }
 
-    List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
+    List<AnalyzedVideo> thrzeadInfo = new ArrayList<AnalyzedVideo>();
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
+    
     Entity timeEntity = results.asSingleEntity();
     long longLastUpdate = (long) timeEntity.getProperty(LAST_UPDATE);
     long currentTimestamp = System.currentTimeMillis();
@@ -105,7 +106,7 @@ public class DataServlet extends HttpServlet {
         String title = post.getTitle();
         String id = post.getID();
         double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
-        int likes = random.nextInt(300) + 1;
+        int likes = (int)post.getLikes().intValue();
         String url = post.getUrl();
         long timeStamp = post.getTimeStamp().getValue();
 
@@ -120,6 +121,7 @@ public class DataServlet extends HttpServlet {
         datastore.put(videoEntity);
       }
     }
+
     for (Entity entity : results.asIterable()) {
       String title = (String) entity.getProperty(TITLE);
       long like = (long) entity.getProperty(LIKES);

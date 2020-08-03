@@ -23,6 +23,8 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -40,6 +42,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -87,26 +90,36 @@ public class DataServlet extends HttpServlet {
     List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
+    Entity timeEntity = results.asSingleEntity();
+    long longLastUpdate = (long) timeEntity.getProperty(LAST_UPDATE);
     long currentTimestamp = System.currentTimeMillis();
-    for (YoutubePost post : newPosts) {
-      String title = post.getTitle();
-      String id = post.getID();
-      double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
-      int likes = random.nextInt(300) + 1;
-      String url = post.getUrl();
-      long timeStamp = post.getTimeStamp().getValue();
+    Date presentDate = new Date(currentTimestamp);
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date(longLastUpdate));
+    cal.add(Calendar.DATE, 1);
+    Date updatePlusOne = cal.getTime();
 
-      Entity videoEntity = new Entity(VIDEO);
-      videoEntity.setProperty(ID, id);
-      videoEntity.setProperty(TITLE, title);
-      videoEntity.setProperty(LIKES, likes);
-      videoEntity.setProperty(SENTIMENT, sentiment);
-      videoEntity.setProperty(URL, url);
-      videoEntity.setProperty(TIMESTAMP, timeStamp);
-      videoEntity.setProperty(LAST_UPDATE, currentTimestamp);
-      datastore.put(videoEntity);
+    if(presentDate.after(updatePlusOne)){
+      clear(results);
+      for (YoutubePost post : newPosts) {
+        String title = post.getTitle();
+        String id = post.getID();
+        double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
+        int likes = random.nextInt(300) + 1;
+        String url = post.getUrl();
+        long timeStamp = post.getTimeStamp().getValue();
+
+        Entity videoEntity = new Entity(VIDEO);
+        videoEntity.setProperty(ID, id);
+        videoEntity.setProperty(TITLE, title);
+        videoEntity.setProperty(LIKES, likes);
+        videoEntity.setProperty(SENTIMENT, sentiment);
+        videoEntity.setProperty(URL, url);
+        videoEntity.setProperty(TIMESTAMP, timeStamp);
+        videoEntity.setProperty(LAST_UPDATE, currentTimestamp);
+        datastore.put(videoEntity);
+      }
     }
-
     for (Entity entity : results.asIterable()) {
       String title = (String) entity.getProperty(TITLE);
       long like = (long) entity.getProperty(LIKES);
@@ -141,5 +154,12 @@ public class DataServlet extends HttpServlet {
       throw new IllegalArgumentException("Could not convert to int", e);
     }
     return convertee;
+  }
+  private void clear(PreparedQuery results){
+    for (Entity entity: results.asIterable()){
+      long id = (long) entity.getKey().getId();
+      Key videoKey = KeyFactory.createKey(VIDEO, id);
+      datastore.delete(videoKey);
+    }
   }
 }

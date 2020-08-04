@@ -101,7 +101,6 @@ public class YoutubeApi {
 
         VideoListResponse likeListResponse = likeList.setKey(key).execute();
         BigInteger videoLikes = likeListResponse.getItems().get(0).getStatistics().getLikeCount();
-        System.out.println("likes" + videoLikes);
 
         YoutubePost newPost =
             new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),

@@ -17,6 +17,7 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.api.services.youtube.model.VideoStatistics;
 import com.google.sps.servlets.YoutubeApiException;
 import java.io.IOException;
 import java.lang.System;
@@ -94,9 +95,17 @@ public class YoutubeApi {
           CommentSnippet snippet = commentThread.getSnippet().getTopLevelComment().getSnippet();
           commentList.add(new CommentData(snippet.getTextDisplay(), snippet.getLikeCount()));
         }
+
+        YouTube.Videos.List likeList =
+            getService().videos().list("statistics").setId(searchResult.getId().getVideoId());
+
+        VideoListResponse likeListResponse = likeList.setKey(key).execute();
+        BigInteger videoLikes = likeListResponse.getItems().get(0).getStatistics().getLikeCount();
+        System.out.println("likes" + videoLikes);
+
         YoutubePost newPost =
             new YoutubePost(video.getSnippet().getTitle(), video.getSnippet().getDescription(),
-                video.getId(), video.getSnippet().getPublishedAt(), commentList);
+                video.getId(), video.getSnippet().getPublishedAt(), commentList, videoLikes);
         list.add(newPost);
       }
       return list;

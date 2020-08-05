@@ -18,7 +18,7 @@ let sortType = 'none';
 
 function addThreads() {
   const url = `/videos-sentiment?currentPage=${currentPage}&postPerPage=${
-      postPerPage}&sortType=${sortType}`;
+    postPerPage}&sortType=${sortType}`;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';

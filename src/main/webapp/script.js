@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 let currentPage = 1;
-const postPerPage = 10; 
+const postPerPage = 10;
 let numberOfPages = 1;
+let sortType = 'none';
 
 function addThreads() {  // eslint-disable-line
-  const url =
-      `/videos-sentiment?currentPage=${currentPage}&postPerPage=${postPerPage}`;
+  const url = `/videos-sentiment?currentPage=${currentPage}&postPerPage=${
+      postPerPage}&sortType=${sortType}`;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';

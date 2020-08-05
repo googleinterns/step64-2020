@@ -109,8 +109,9 @@ public class YoutubeApi {
       }
       return list;
     } catch (GeneralSecurityException | IOException e) {
-      System.out.println("Error: Youtube api returning exception" + e);
-      throw new YoutubeApiException("Youtube Api could not get service", e);
+      
+      System.out.println("Error: Youtube api returning exception" + e );
+      throw new YoutubeApiException("Youtube Api could not get service: " + key, e);
     }
   }
 }

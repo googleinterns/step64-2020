@@ -23,9 +23,10 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -68,31 +69,39 @@ public class DataServlet extends HttpServlet {
   private static final String ID = "Id";
   private static final String URL = "Url";
   private static Random random = new Random();
-  private final JSONObject threadInfo = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private final Analyze analyze = new Analyze();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String sortType = request.getParameter("sortType");
     Query query = new Query(VIDEO);
+    if (sortType.equals("most-Recent")) {
+      query.addSort(TIMESTAMP, SortDirection.DESCENDING);
+    } else if (sortType.equals("high-Sentiment")) {
+      query.addSort(SENTIMENT, SortDirection.DESCENDING);
+    } else if (sortType.equals("low-Sentiment")) {
+      query.addSort(SENTIMENT, SortDirection.ASCENDING);
+    } else if (sortType.equals("most-Upvotes")) {
+      query.addSort(LIKES, SortDirection.DESCENDING);
+    } else if (sortType.equals("least-Upvotes")) {
+      query.addSort(LIKES, SortDirection.ASCENDING);
+    }
     PreparedQuery results = datastore.prepare(query);
 
     List<YoutubePost> newPosts;
-    try {
-      newPosts = YoutubeApi.getYoutubePost();
-    } catch (YoutubeApiException e) {
-      System.out.println("Error: Youtube api returning exception" + e);
-      response.sendError(500, "An error occurred while fetching Youtube Posts");
-      return;
-    }
 
-    List<AnalyzedVideo> thrzeadInfo = new ArrayList<AnalyzedVideo>();
+    long longLastUpdate = 0;
+    List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
     int currentPage = convertToInt(request.getParameter("currentPage"));
     int postPerPage = convertToInt(request.getParameter("postPerPage"));
-    
-    Entity timeEntity = results.asSingleEntity();
-    long longLastUpdate = (long) timeEntity.getProperty(LAST_UPDATE);
+
+    List<Entity> entities = results.asList(FetchOptions.Builder.withDefaults());
+    if (entities.size() > 0 && entities.get(0).getProperty(LAST_UPDATE) != null) {
+      Entity timeEntity = entities.get(0);
+      longLastUpdate = (long) timeEntity.getProperty(LAST_UPDATE);
+    }
     long currentTimestamp = System.currentTimeMillis();
     Date presentDate = new Date(currentTimestamp);
     Calendar cal = Calendar.getInstance();
@@ -100,16 +109,22 @@ public class DataServlet extends HttpServlet {
     cal.add(Calendar.DATE, 1);
     Date updatePlusOne = cal.getTime();
 
-    if(presentDate.after(updatePlusOne)){
+    if (presentDate.after(updatePlusOne) || longLastUpdate == 0) {
+      try {
+        newPosts = YoutubeApi.getYoutubePost();
+      } catch (YoutubeApiException e) {
+        System.out.println("Error: Youtube api returning exception" + e);
+        response.sendError(500, "An error occurred while fetching Youtube Posts");
+        return;
+      }
       clear(results);
       for (YoutubePost post : newPosts) {
         String title = post.getTitle();
         String id = post.getID();
-        double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
-        int likes = (int)post.getLikes().intValue();
+        double sentiment = 3.4;//analyze.getOverallSentimentScore(post.getContent(), post.getComments());
+        int likes = post.getLikes().intValue();
         String url = post.getUrl();
         long timeStamp = post.getTimeStamp().getValue();
-
         Entity videoEntity = new Entity(VIDEO);
         videoEntity.setProperty(ID, id);
         videoEntity.setProperty(TITLE, title);
@@ -157,8 +172,8 @@ public class DataServlet extends HttpServlet {
     }
     return convertee;
   }
-  private void clear(PreparedQuery results){
-    for (Entity entity: results.asIterable()){
+  private void clear(PreparedQuery results) {
+    for (Entity entity : results.asIterable()) {
       long id = (long) entity.getKey().getId();
       Key videoKey = KeyFactory.createKey(VIDEO, id);
       datastore.delete(videoKey);

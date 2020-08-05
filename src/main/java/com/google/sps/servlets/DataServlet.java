@@ -121,7 +121,7 @@ public class DataServlet extends HttpServlet {
       for (YoutubePost post : newPosts) {
         String title = post.getTitle();
         String id = post.getID();
-        double sentiment = 3.4;//analyze.getOverallSentimentScore(post.getContent(), post.getComments());
+        double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
         int likes = post.getLikes().intValue();
         String url = post.getUrl();
         long timeStamp = post.getTimeStamp().getValue();

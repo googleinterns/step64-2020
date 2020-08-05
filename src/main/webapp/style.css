@@ -22,22 +22,20 @@ h1 {
   text-align: center;
   margin-bottom: 0;
   font-weight: 700;
-  text-shadow: 3px 3px #0a802f;
 }
+
 .youtube {
-  background: linear-gradient(black, dimgray, black);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-  -moz-background-clip: text;
+  color: black;
   padding-bottom: 20px;
   font-family: 'Courier New', monospace;
+  text-shadow: 3px 3px green;
 }
+
 .youtube:after {
   content: ' Analyze';
   font-weight: 900;
-  text-shadow: 3px 3px green;
+  color: green;
+  text-shadow: 3px 3px black;
 }
 #thread-container {
   padding-top: 15px;

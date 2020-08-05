@@ -16,9 +16,9 @@ const postPerPage = 10;
 let numberOfPages = 1;
 let sortType = 'none';
 
-function addThreads() {  // eslint-disable-line
+function addThreads() {
   const url = `/videos-sentiment?currentPage=${currentPage}&postPerPage=${
-      postPerPage}&sortType=${sortType}`;
+    postPerPage}&sortType=${sortType}`;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
@@ -130,7 +130,7 @@ function createPageOptions() {
   amountOfPages.innerHTML = '';
   amountOfPages.appendChild(document.createTextNode(' of ' + currentPage));
 }
-function Sort() {
+function Sort() { // eslint-disable-line
   sortType = document.getElementById('Sort').value;
   addThreads();
 }

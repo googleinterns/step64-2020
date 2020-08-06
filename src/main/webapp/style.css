@@ -1,11 +1,6 @@
 body {
-  background: repeating-linear-gradient(
-    -55deg,
-    white,
-    white 10px,
-    rgba(167, 233, 167, 0.069) 10px,
-    rgba(167, 233, 167, 0.069) 20px
-  );
+  background-color: white; 
+  background-image: linear-gradient(to bottom right,white, rgb(242, 247, 242), rgb(244, 255, 244),rgb(230, 255, 206),  rgb(211, 255, 169));
   background-attachment: fixed;
   filter: contrast(200%);
 }
@@ -86,7 +81,7 @@ ul.description {
   border: 1px black;
   background-color: rgb(163, 250, 166);
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .sentimentKey {
   position: relative;

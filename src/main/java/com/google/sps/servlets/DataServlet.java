@@ -81,8 +81,6 @@ public class DataServlet extends HttpServlet {
     List<Entity> entities = results.asList(FetchOptions.Builder.withDefaults());
     checkDaily(entities, response, results);
     List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
-    int currentPage = convertToInt(request.getParameter("currentPage"));
-    int postPerPage = convertToInt(request.getParameter("postPerPage"));
 
     for (Entity entity : results.asIterable()) {
       String title = (String) entity.getProperty(TITLE);
@@ -95,29 +93,9 @@ public class DataServlet extends HttpServlet {
       threadInfo.add(currentVideo);
     }
 
-    threadInfo = createCurrentPage(currentPage, postPerPage, threadInfo);
 
     response.setContentType("application/json;");
     response.getWriter().print(gson.toJson(threadInfo));
-  }
-
-  private List<AnalyzedVideo> createCurrentPage(
-      int currentPage, int postPerPage, List<AnalyzedVideo> threadInfo) {
-    int start = (currentPage - 1) * postPerPage;
-    int end = Math.min(threadInfo.size(), (currentPage * postPerPage));
-    threadInfo = threadInfo.subList(start, end);
-    return threadInfo;
-  }
-
-  private int convertToInt(String beingconverted) {
-    int convertee = 0;
-    try {
-      convertee = Integer.parseInt(beingconverted);
-    } catch (NumberFormatException e) {
-      System.err.println("Error: Argument is returning: " + beingconverted);
-      throw new IllegalArgumentException("Could not convert to int", e);
-    }
-    return convertee;
   }
   private void clear(PreparedQuery results) {
     for (Entity entity : results.asIterable()) {

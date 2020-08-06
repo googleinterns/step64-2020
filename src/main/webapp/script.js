@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 let currentPage = 1;
-const postPerPage = 10;
+const postPerPage =3;
 let numberOfPages = 1;
 let sortType = 'none';
 
 function addThreads() {
-  const url = `/videos-sentiment?currentPage=${currentPage}&postPerPage=
-  ${postPerPage}&sortType=${sortType}`;
+  const url = `/videos-sentiment?currentPage=${currentPage}&postPerPage=${postPerPage}&sortType=${sortType}`;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
     numberOfPages = Math.max(1, Math.ceil(threadInfoList.length / postPerPage));
+    threadInfoList = createCurrentPage(threadInfoList);
     createPageOptions();
     update();
     threadList.appendChild(loadList(threadInfoList));
@@ -120,6 +120,13 @@ function update() {
 function createPageOptions() {
   const select = document.getElementById('pageNumber');
   select.innerHTML = '';
+  let currentOption = document.createElement('option');
+  currentOption.selected= true;
+  currentOption.disabled= true;
+  currentOption.hidden= true;
+  currentOption.append(document.createTextNode(currentPage));
+  select.append(currentOption);
+  console.log(currentPage);
   for (let i = 1; i <= numberOfPages; i++) {
     const pageOption = document.createElement('option');
     pageOption.appendChild(document.createTextNode(i));
@@ -128,9 +135,15 @@ function createPageOptions() {
   }
   const amountOfPages = document.getElementById('amountOfPages');
   amountOfPages.innerHTML = '';
-  amountOfPages.appendChild(document.createTextNode(' of ' + currentPage));
+  amountOfPages.appendChild(document.createTextNode(' of ' + numberOfPages));
 }
 function Sort() {  // eslint-disable-line
   sortType = document.getElementById('Sort').value;
   addThreads();
+}
+function createCurrentPage(threadInfo) {
+  let start = (currentPage - 1) * postPerPage;
+  let end = Math.min(threadInfo.length, (currentPage * postPerPage));
+  threadInfo = threadInfo.slice(start, end);
+  return threadInfo;
 }

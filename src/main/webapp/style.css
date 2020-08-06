@@ -1,6 +1,13 @@
 body {
-  background-color: white; 
-  background-image: linear-gradient(to bottom right,white, rgb(242, 247, 242), rgb(244, 255, 244),rgb(230, 255, 206),  rgb(211, 255, 169));
+  background-color: white;
+  background-image: linear-gradient(
+    to bottom right,
+    white,
+    rgb(242, 247, 242),
+    rgb(244, 255, 244),
+    rgb(230, 255, 206),
+    rgb(211, 255, 169)
+  );
   background-attachment: fixed;
   filter: contrast(200%);
 }

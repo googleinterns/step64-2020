@@ -93,7 +93,6 @@ public class DataServlet extends HttpServlet {
       threadInfo.add(currentVideo);
     }
 
-
     response.setContentType("application/json;");
     response.getWriter().print(gson.toJson(threadInfo));
   }

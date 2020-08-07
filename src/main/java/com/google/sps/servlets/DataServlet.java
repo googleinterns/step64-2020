@@ -135,6 +135,7 @@ public class DataServlet extends HttpServlet {
       String title = post.getTitle();
       String id = post.getID();
       double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
+      ;
       int likes = post.getLikes().intValue();
       String url = post.getUrl();
       long timeStamp = post.getTimeStamp().getValue();

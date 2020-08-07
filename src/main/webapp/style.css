@@ -1,29 +1,94 @@
+body {
+  background-color: white;
+  background-image: linear-gradient(
+    to bottom right,
+    white,
+    rgb(242, 247, 242),
+    rgb(244, 255, 244),
+    rgb(230, 255, 206),
+    rgb(211, 255, 169)
+  );
+  background-attachment: fixed;
+  filter: contrast(200%);
+}
 #content {
   margin-left: auto;
   margin-right: auto;
   width: 800px;
   text-align: center;
 }
+h1 {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: normal;
+  font-size: 6em;
+  text-align: center;
+  margin-bottom: 0;
+  font-weight: 700;
+}
+
+.youtube {
+  color: black;
+  padding-bottom: 20px;
+  font-family: 'Courier New', monospace;
+  text-shadow: 3px 3px green;
+}
+
+.youtube:after {
+  content: ' Analyze';
+  font-weight: 900;
+  color: green;
+  text-shadow: 3px 3px black;
+}
+#thread-container {
+  padding-top: 15px;
+}
+#Sort {
+  position: relative;
+  left: 275px;
+  height: 30px;
+  width: 150px;
+  background-color: green;
+  border: 2px solid black;
+  border-radius: 10px;
+  font-family: 'Archivo Black', sans-serif;
+  color: white;
+}
+option {
+  border: 1px solid white;
+}
+#page {
+  padding-top: 10px;
+}
 button.thread {
   text-align: left;
   width: 100%;
-  border: 1px solid lightgray;
+  background-color: #166e19;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  font-stretch: expanded;
+  font-family: Gill Sans, Gill Sans MT, Calibri, sans-serif;
+  border-radius: 15px 50px;
   padding: 10px;
 }
 li.description-li {
+  border-radius: 15px;
   list-style-type: none;
   text-indent: 0;
+  font-size: 17px;
 }
 ul.description {
+  font-size: 15px;
+  font-family: Gill Sans, Gill Sans MT, Calibri, sans-serif;
   margin: auto;
   text-indent: 20px;
   height: auto;
-  width: 750px;
+  width: 700px;
   text-align: left;
   border: 1px black;
-  background-color: gainsboro;
+  background-color: rgb(163, 250, 166);
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .sentimentKey {
   position: relative;
@@ -46,4 +111,8 @@ ul.description {
 .sentimentKey:hover .sentimentText {
   visibility: visible;
   opacity: 1;
+}
+#amountOfPages {
+  font-family: 'Archivo Black', sans-serif;
+  color: black;
 }

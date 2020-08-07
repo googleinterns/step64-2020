@@ -32,9 +32,9 @@ public class YoutubePost {
   private final String content;
   private final String url;
   private final String id;
-  private static DateTime timeStamp;
-  private static BigInteger likeCount;
-  private static List<CommentData> commentList;
+  private final DateTime timeStamp;
+  private final BigInteger likeCount;
+  private final List<CommentData> commentList;
 
   public YoutubePost(String title, String content, String id, DateTime timeStamp,
       List<CommentData> commentList, BigInteger likeCount) {

@@ -24,6 +24,9 @@ import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -40,6 +43,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -65,47 +69,18 @@ public class DataServlet extends HttpServlet {
   private static final String ID = "Id";
   private static final String URL = "Url";
   private static Random random = new Random();
-  private final JSONObject threadInfo = new JSONObject();
   private final Gson gson = new Gson();
   private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   private final Analyze analyze = new Analyze();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query(VIDEO);
-    PreparedQuery results = datastore.prepare(query);
+    String sortType = request.getParameter("sortType");
+    PreparedQuery results = sortQuery(sortType);
 
-    List<YoutubePost> newPosts;
-    try {
-      newPosts = YoutubeApi.getYoutubePost();
-    } catch (YoutubeApiException e) {
-      System.out.println("Error: Youtube api returning exception" + e);
-      response.sendError(500, "An error occurred while fetching Youtube Posts");
-      return;
-    }
-
+    List<Entity> entities = results.asList(FetchOptions.Builder.withDefaults());
+    checkDaily(entities, response, results);
     List<AnalyzedVideo> threadInfo = new ArrayList<AnalyzedVideo>();
-    int currentPage = convertToInt(request.getParameter("currentPage"));
-    int postPerPage = convertToInt(request.getParameter("postPerPage"));
-    long currentTimestamp = System.currentTimeMillis();
-    for (YoutubePost post : newPosts) {
-      String title = post.getTitle();
-      String id = post.getID();
-      double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
-      int likes = random.nextInt(300) + 1;
-      String url = post.getUrl();
-      long timeStamp = post.getTimeStamp().getValue();
-
-      Entity videoEntity = new Entity(VIDEO);
-      videoEntity.setProperty(ID, id);
-      videoEntity.setProperty(TITLE, title);
-      videoEntity.setProperty(LIKES, likes);
-      videoEntity.setProperty(SENTIMENT, sentiment);
-      videoEntity.setProperty(URL, url);
-      videoEntity.setProperty(TIMESTAMP, timeStamp);
-      videoEntity.setProperty(LAST_UPDATE, currentTimestamp);
-      datastore.put(videoEntity);
-    }
 
     for (Entity entity : results.asIterable()) {
       String title = (String) entity.getProperty(TITLE);
@@ -118,28 +93,77 @@ public class DataServlet extends HttpServlet {
       threadInfo.add(currentVideo);
     }
 
-    threadInfo = createCurrentPage(currentPage, postPerPage, threadInfo);
-
     response.setContentType("application/json;");
     response.getWriter().print(gson.toJson(threadInfo));
   }
-
-  private List<AnalyzedVideo> createCurrentPage(
-      int currentPage, int postPerPage, List<AnalyzedVideo> threadInfo) {
-    int start = (currentPage - 1) * postPerPage;
-    int end = Math.min(threadInfo.size(), (currentPage * postPerPage));
-    threadInfo = threadInfo.subList(start, end);
-    return threadInfo;
-  }
-
-  private int convertToInt(String beingconverted) {
-    int convertee = 0;
-    try {
-      convertee = Integer.parseInt(beingconverted);
-    } catch (NumberFormatException e) {
-      System.err.println("Error: Argument is returning: " + beingconverted);
-      throw new IllegalArgumentException("Could not convert to int", e);
+  private void clear(PreparedQuery results) {
+    for (Entity entity : results.asIterable()) {
+      long id = (long) entity.getKey().getId();
+      Key videoKey = KeyFactory.createKey(VIDEO, id);
+      datastore.delete(videoKey);
     }
-    return convertee;
+  }
+  private void checkDaily(List<Entity> entities, HttpServletResponse response,
+      PreparedQuery results) throws IOException {
+    long longLastUpdate = 0;
+    if (entities.size() > 0 && entities.get(0).getProperty(LAST_UPDATE) != null) {
+      Entity timeEntity = entities.get(0);
+      longLastUpdate = (long) timeEntity.getProperty(LAST_UPDATE);
+    }
+    long currentTimestamp = System.currentTimeMillis();
+    Date presentDate = new Date(currentTimestamp);
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(new Date(longLastUpdate));
+    cal.add(Calendar.DATE, 1);
+    Date updatePlusOne = cal.getTime();
+    if (presentDate.after(updatePlusOne) || longLastUpdate == 0) {
+      update(response, results, currentTimestamp);
+    }
+  }
+  private void update(HttpServletResponse response, PreparedQuery results, long currentTimestamp)
+      throws IOException {
+    List<YoutubePost> newPosts;
+    try {
+      newPosts = YoutubeApi.getYoutubePost();
+    } catch (YoutubeApiException e) {
+      System.out.println("Error: Youtube api returning exception" + e);
+      response.sendError(500, "An error occurred while fetching Youtube Posts");
+      return;
+    }
+    clear(results);
+    for (YoutubePost post : newPosts) {
+      String title = post.getTitle();
+      String id = post.getID();
+      double sentiment = analyze.getOverallSentimentScore(post.getContent(), post.getComments());
+      ;
+      int likes = post.getLikes().intValue();
+      String url = post.getUrl();
+      long timeStamp = post.getTimeStamp().getValue();
+      Entity videoEntity = new Entity(VIDEO);
+      videoEntity.setProperty(ID, id);
+      videoEntity.setProperty(TITLE, title);
+      videoEntity.setProperty(LIKES, likes);
+      videoEntity.setProperty(SENTIMENT, sentiment);
+      videoEntity.setProperty(URL, url);
+      videoEntity.setProperty(TIMESTAMP, timeStamp);
+      videoEntity.setProperty(LAST_UPDATE, currentTimestamp);
+      datastore.put(videoEntity);
+    }
+  }
+  private PreparedQuery sortQuery(String sortType) {
+    Query query = new Query(VIDEO);
+    if (sortType.equals("most-Recent")) {
+      query.addSort(TIMESTAMP, SortDirection.DESCENDING);
+    } else if (sortType.equals("high-Sentiment")) {
+      query.addSort(SENTIMENT, SortDirection.DESCENDING);
+    } else if (sortType.equals("low-Sentiment")) {
+      query.addSort(SENTIMENT, SortDirection.ASCENDING);
+    } else if (sortType.equals("most-Upvotes")) {
+      query.addSort(LIKES, SortDirection.DESCENDING);
+    } else if (sortType.equals("least-Upvotes")) {
+      query.addSort(LIKES, SortDirection.ASCENDING);
+    }
+    PreparedQuery results = datastore.prepare(query);
+    return results;
   }
 }

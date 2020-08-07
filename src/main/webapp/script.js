@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 let currentPage = 1;
-const postPerPage = 10;  // eslint-disable-line
+const postPerPage = 3;
 let numberOfPages = 1;
+let sortType = 'none';
 
-function addThreads() {  // eslint-disable-line
-  const url =
-      `/videos-sentiment?currentPage=${currentPage}&postPerPage=${postPerPage}`;
+function addThreads() {
+  const url = `/videos-sentiment?currentPage=${currentPage}&postPerPage=
+    ${postPerPage}&sortType=${sortType}`;
   fetch(url).then((response) => response.json()).then((threadInfoList) => {
     const threadList = document.getElementById('thread-container');
     threadList.innerHTML = '';
     numberOfPages = Math.max(1, Math.ceil(threadInfoList.length / postPerPage));
+    threadInfoList = createCurrentPage(threadInfoList);
     createPageOptions();
     update();
     threadList.appendChild(loadList(threadInfoList));
@@ -47,12 +49,13 @@ function createDescription(video) {
   liDescription.className = 'description-li';
   threadDescription.appendChild(liDescription);
   threadDescription.appendChild(
-      createLiElement('Sentiment Value: ' + video.sentiment));
+      createLiElement('Sentiment Value: ' + video.sentiment.toFixed(2)));
   threadDescription.appendChild(createLiElement('Likes: ' + video.likes));
   threadDescription.appendChild(
       createLiElement('Time & Date: ' + video.timestamp));
   threadDescription.appendChild(linkListElement(video.url));
   threadDescription.className = 'description';
+
   return threadDescription;
 }
 
@@ -119,6 +122,13 @@ function update() {
 function createPageOptions() {
   const select = document.getElementById('pageNumber');
   select.innerHTML = '';
+  const currentOption = document.createElement('option');
+  currentOption.selected = true;
+  currentOption.disabled = true;
+  currentOption.hidden = true;
+  currentOption.append(document.createTextNode(currentPage));
+  select.append(currentOption);
+  console.log(currentPage);
   for (let i = 1; i <= numberOfPages; i++) {
     const pageOption = document.createElement('option');
     pageOption.appendChild(document.createTextNode(i));
@@ -127,5 +137,15 @@ function createPageOptions() {
   }
   const amountOfPages = document.getElementById('amountOfPages');
   amountOfPages.innerHTML = '';
-  amountOfPages.appendChild(document.createTextNode(' of ' + currentPage));
+  amountOfPages.appendChild(document.createTextNode(' of ' + numberOfPages));
+}
+function Sort() {  // eslint-disable-line
+  sortType = document.getElementById('Sort').value;
+  addThreads();
+}
+function createCurrentPage(threadInfo) {
+  const start = (currentPage - 1) * postPerPage;
+  const end = Math.min(threadInfo.length, (currentPage * postPerPage));
+  threadInfo = threadInfo.slice(start, end);
+  return threadInfo;
 }
